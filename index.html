@@ -69,6 +69,98 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Web组件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/" class="article-date">
+  <time class="dt-published" datetime="2024-04-13T05:20:44.000Z" itemprop="datePublished">2024-04-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>1、JavaScript注入<br>2、Native调用H5、H5调用Native<br>3、Native和H5的双向通信</p>
+<h2>一、Web相关权限</h2>
+
+<ol>
+<li>domStorageAccess  设置是否开启文档对象模型存储接口（DOM Storage API）权限，默认未开启。</li>
+<li>fileAccess 设置是否开启应用中文件系统的访问，默认启用。$rawfile(filepath&#x2F;filename)中rawfile路径的文件不受该属性影响而限制访问。</li>
+<li>imageAccess 设置是否允许自动加载图片资源，默认允许。</li>
+<li>javaScriptAccess 设置是否允许执行JavaScript脚本，默认允许执行。</li>
+<li>mixedMode 设置是否允许加载超文本传输协议（HTTP）和超文本传输安全协议（HTTPS）混合内容，默认不允许加载HTTP和HTTPS混合内容。</li>
+<li>onlineImageAccess 设置是否允许从网络加载图片资源（通过HTTP和HTTPS访问的资源），默认允许访问。</li>
+<li>zoomAccess 设置是否支持手势进行缩放，默认允许执行缩放。</li>
+<li>overviewModeAccess 设置是否使用概览模式加载网页，默认使用该方式。当前仅支持移动设备。</li>
+<li>databaseAccess 设置是否开启数据库存储API权限，默认不开启。</li>
+<li>geolocationAccess 设置是否开启获取地理位置权限，默认开启。</li>
+<li>mediaPlayGestureAccess 设置有声视频播放是否需要用户手动点击，静音视频播放不受该接口管控，默认需要。</li>
+<li>multiWindowAccess 设置是否开启多窗口权限，默认不开启。 使能多窗口权限时，需要实现onWindowNew事件。</li>
+<li>horizontalScrollBarAccess 设置是否显示横向滚动条，包括系统默认滚动条和用户自定义滚动条。默认显示。</li>
+<li>verticalScrollBarAccess 设置是否显示纵向滚动条，包括系统默认滚动条和用户自定义滚动条。默认显示。</li>
+<li>allowWindowOpenMethod 设置网页是否可以通过JavaScript自动打开新窗口。默认可以。</li>
+<li>forceDarkAccess 设置网页是否开启强制深色模式。默认关闭。该属性仅在darkMode开启深色模式时生效。</li>
+</ol>
+<h2>二、Web相关事件</h2>
+
+<p>onShowFileSelector 调用此函数以处理具有“文件”输入类型的HTML表单，以响应用户按下的“选择文件”按钮。</p>
+<ol>
+<li>onPageBegin 网页开始加载时触发该回调，且只在主frame触发，iframe或者frameset的内容加载时不会触发此回调。</li>
+<li>onPageEnd 网页加载完成时触发该回调，且只在主frame触发。<br>onProgressChange 网页加载进度变化时触发该回调。<br>onPageVisible 设置旧页面不再呈现，新页面即将可见时触发的回调函数。</li>
+<li>onAlert 网页触发alert()告警弹窗时触发回调。</li>
+<li>onConfirm 网页调用confirm()告警时触发此回调</li>
+<li>onBeforeUnload 刷新或关闭场景下，在即将离开当前页面时触发此回调。刷新或关闭当前页面应先通过点击等方式获取焦点，才会触发此回调。这里可以提示用户正要离开该页面。当回调返回true时，应用可以调用系统弹窗能力，并且需要根据用户的确认或取消操作调用JsResult通知Web组件最终是否离开当前页面。<br>onInterceptRequest 当Web组件加载url之前触发该回调，用于拦截url并返回响应数据。<br>onLoadIntercept 当Web组件加载url之前触发该回调，用于判断是否阻止此次访问。默认允许加载。</li>
+<li>onConsole 通知宿主应用JavaScript console消息。<br>onRequestSelected 当Web组件获得焦点时触发该回调。<br>onScreenCaptureRequest 通知收到屏幕捕获请求。<br>onControllerAttached 当Controller成功绑定到Web组件时触发该回调，并且该Controller必须为WebviewController，因该回调调用时网页还未加载，无法在回调中使用有关操作网页的接口，例如zoomIn、zoomOut等，可以使用loadUrl、getWebId等操作网页不相关的接口。</li>
+</ol>
+<p>onPermissionRequest 通知收到获取权限请求。<br>onContextMenuShow 长按特定元素（例如图片，链接）或鼠标右键，跳出菜单。<br>onDataResubmitted 设置网页表单可以重新提交时触发的回调函数。<br>onScroll 通知网页滚动条滚动位置。<br>onGeolocationShow 通知用户收到地理位置信息获取请求。<br>onGeolocationHide 通知用户先前被调用onGeolocationShow时收到地理位置信息获取请求已被取消。<br>onAudioStateChanged 设置网页上的音频播放状态发生改变时的回调函数。<br>onFullScreenEnter 通知开发者web组件进入全屏模式。<br>onFullScreenExit 通知开发者web组件退出全屏模式。<br>onWindowNew 使能multiWindowAccess情况下，通知用户新建窗口请求。<br>onWindowExit 通知用户窗口关闭请求。<br>onFirstContentfulPaint 设置网页首次内容绘制回调函数。</p>
+<p>onErrorReceive 网页加载遇到错误时触发该回调。<br>onHttpErrorReceive 网页加载资源遇到的HTTP错误（响应码&gt;&#x3D;400)时触发该回调。<br>onDownloadStart 通知主应用开始下载一个文件。<br>onTitleReceive 网页document标题更改时触发该回调。<br>onRefreshAccessedHistory 加载网页页面完成时触发该回调，用于应用更新其访问的历史链接。<br>onRenderExited 应用渲染进程异常退出时触发该回调。<br>onResourceLoad 通知Web组件所加载的资源文件url信息。<br>onScaleChange 当前页面显示比例的变化时触发该回调。</p>
+<h2>一、WebviewController</h2>
+
+
+<h2>二、JavaScript注入</h2>
+1. javaScriptProxy 注入JavaScript对象到window对象中，并在window对象中调用该对象的方法。
+
+<p>参数： object: 需要注入的对象，name: 对象名称，methodList: 需要注入的方法列表，controller: 绑定的controller。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.javaScriptProxy(&#123;</span><br><span class="line">          object: this.testObj,</span><br><span class="line">          name: &quot;objName&quot;,</span><br><span class="line">          methodList: [&quot;test&quot;, &quot;toString&quot;],</span><br><span class="line">          controller: this.controller,</span><br><span class="line">      &#125;)</span><br></pre></td></tr></table></figure>
+
+
+<h2>三、cacheMode</h2>
+
+<ol>
+<li>Default &#x3D; 0	使用未过期的cache加载资源，如果cache中无该资源则从网络中获取。</li>
+<li>None &#x3D;	1	加载资源使用cache，如果cache中无该资源则从网络中获取。</li>
+<li>Online &#x3D; 2	加载资源不使用cache，全部从网络中获取。</li>
+<li>Only &#x3D; 3	只从cache中加载资源。</li>
+</ol>
+<p>darkMode 设置Web深色模式，默认关闭。当深色模式开启时，Web将启用媒体查询prefers-color-scheme中网页所定义的深色样式，若网页未定义深色样式，则保持原状。</p>
+<p>textZoomRatio 设置页面的文本缩放百分比，默认为100%。<br>initialScale 设置整体页面的缩放百分比，默认为100。<br>userAgent 设置用户代理。<br>blockNetwork 设置Web组件是否阻止从网络加载资源。<br>defaultFixedFontSize 设置网页的默认等宽字体大小,默认值13。<br>defaultFontSize 设置网页的默认字体大小,默认值16。<br>minFontSize 设置网页字体大小最小值，默认值8。<br>mediaOptions 设置Web媒体播放的策略，其中包括：Web中的音频在重新获焦后能够自动续播的有效期、应用内多个Web实例的音频是否独占。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/13/Web%E7%BB%84%E4%BB%B6/" data-id="cluxnftmd0000mgqz8mmmaija" data-title="Web组件" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-鸿蒙学习入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="article-date">
@@ -83,7 +175,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">鸿蒙学习入门</a>
+      <a class="p-name article-title" href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">TS装饰器</a>
     </h1>
   
 
@@ -91,17 +183,81 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>HarmonyOS 是华为开源的鸿蒙操作系统，是华为为手机、智能穿戴、智能家居等设备打造的一套开放平台，支持开发者开发应用。</p>
-<p>OpenHarmony 是华为开源的鸿蒙操作系统，是华为为手机、智能穿戴、智能家居等设备打造的一套开放平台，支持开发者开发应用。</p>
-<p>ArkTS 是华为开源的鸿蒙操作系统，是华为为手机、智能穿戴、智能家居等设备打造的一套开放平台，支持开发者开发应用。</p>
-<p>ArkUI</p>
-<p>ohpm OpenHarmony Package Manager，是OpenHarmony生态系统中用于管理软件包的工具。</p>
-<p>Hvigor OpenHarmony 应用和服务的构建工具</p>
+        <h1 id="装饰器介绍"><a href="#装饰器介绍" class="headerlink" title="装饰器介绍"></a>装饰器介绍</h1><p>装饰器（Decorator）是<code>TS</code>中的语法特性，用来对类进行装饰加工，可以被附加到类声明、属性、方法、访问器或参数等目标上。</p>
+<p>装饰器本质是一个函数，比如一个装饰器名为<code>decorator</code>，以<code>@decorator</code>的形式使用。装饰器对目标的改变是在代码编译时发生的，编译后的代码中，定义被修饰目标时，装饰器函数会被调用，被装饰的目标的相关数据会被作为参数传入装饰器函数中。</p>
+<h2 id="类装饰器"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器</h2><p>当装饰器用于修饰类时，装饰器应用于类的构造函数。装饰器函数会接受一个参数：<code>target</code> 即目标类的构造函数。可以返回一个新的类覆盖被装饰的类，如果不显式返回，则默认返回被装饰的类本身。</p>
+<p>示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">classDecorator</span>(<span class="params">target: <span class="built_in">Object</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`target: <span class="subst">$&#123;target&#125;</span>`</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@classDecorator</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyClass constructor&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">sayHello</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Hello&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line">myClass.<span class="title function_">sayHello</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">target: class MyClass &#123;</span><br><span class="line">    constructor() &#123;</span><br><span class="line">        console.log(&#x27;MyClass constructor&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">    sayHello() &#123;</span><br><span class="line">        console.log(&#x27;Hello&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">MyClass constructor</span><br><span class="line">Hello</span><br></pre></td></tr></table></figure>
+
+<h2 id="方法装饰器"><a href="#方法装饰器" class="headerlink" title="方法装饰器"></a>方法装饰器</h2><p>使用装饰器装饰类的方法时，装饰器函数可以接收三个参数：</p>
+<ul>
+<li><code>target</code>：装饰器的目标对象，对于静态方法是类的构造函数，对于实例方法是类的原型对象。</li>
+<li><code>propertyKey</code>：方法的名字。</li>
+<li><code>descriptor</code>：属性描述。<code>descriptor</code> 是一个对象，包含了目标方法或属性的各种属性和配置。它是内置的<code>PropertyDescriptor</code> 类型.</li>
+</ul>
+<p>如果有返回值，则会作为目标方法的属性描述符。</p>
+<p>示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">methodDecorator</span>(<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span> | <span class="built_in">symbol</span>, descriptor: PropertyDescriptor</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;target:&#x27;</span>, target);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;propertyKey&#x27;</span>, propertyKey);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;descriptor&#x27;</span>, descriptor);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyClass constructor&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@methodDecorator</span></span><br><span class="line">    <span class="title function_">sayHello</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Hello&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line">myClass.<span class="title function_">sayHello</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">target: &#123;&#125;</span><br><span class="line">propertyKey sayHello</span><br><span class="line">descriptor &#123;</span><br><span class="line">  value: [Function: sayHello],</span><br><span class="line">  writable: true,</span><br><span class="line">  enumerable: false,</span><br><span class="line">  configurable: true</span><br><span class="line">&#125;</span><br><span class="line">MyClass constructor</span><br><span class="line">Hello</span><br></pre></td></tr></table></figure>
+
+<p>有返回值示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">methodDecorator</span>(<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span> | <span class="built_in">symbol</span>, descriptor: PropertyDescriptor</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> func = descriptor.<span class="property">value</span>;</span><br><span class="line">    descriptor.<span class="property">value</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;say hello start&#x27;</span>);</span><br><span class="line">        <span class="title function_">func</span>();</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;say hello end&#x27;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> descriptor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyClass constructor&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@methodDecorator</span></span><br><span class="line">    <span class="title function_">sayHello</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Hello&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line">myClass.<span class="title function_">sayHello</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MyClass constructor</span><br><span class="line">say hello start</span><br><span class="line">Hello</span><br><span class="line">say hello end</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性装饰器"><a href="#属性装饰器" class="headerlink" title="属性装饰器"></a>属性装饰器</h2><p>装饰器装饰属性时，接收两个参数：</p>
+<ul>
+<li><code>target</code>: 静态属性时类的构造函数，实例属性是类的原型对象。</li>
+<li><code>propertyKey</code>: 属性名。</li>
+</ul>
+<p>属性装饰器的返回值会被忽略。</p>
+<blockquote>
+<p>由于TS没有办法在定义一个原型对象的成员变量是描述一个实例属性，并且没办法监视或修改一个数下的初始化方法，所以属性描述符不会作为参数被传入属性装饰器。因此属性修饰器的智能监视类中是否声明了某个名字的属性。</p>
+</blockquote>
+<p>示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">PropertyDescriptor</span>(<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span> | <span class="built_in">symbol</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;target&#x27;</span>, target);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;propertyKey&#x27;</span>, propertyKey);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="meta">@PropertyDescriptor</span></span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span> = <span class="string">&#x27;xiaoli&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">target &#123;&#125;</span><br><span class="line">propertyKey name</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参数装饰器"><a href="#参数装饰器" class="headerlink" title="参数装饰器"></a>参数装饰器</h2><p>参数装饰器接收三个参数：<br><code>target</code>: 静态属性时类的构造函数，实例属性是类的原型对象。。<br><code>propertyKey</code>:表示被装饰的方法的名称。<br><code>parameterIndex</code>: 表示被装饰的参数在方法参数列表中的索引。</p>
+<p>参数装饰器的返回值会被忽略。</p>
+<p>示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">ParamDecorator</span>(<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span>, parameterIndex: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;target&#x27;</span>, target);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;propertyKey&#x27;</span>, propertyKey);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;parameterIndex&#x27;</span>, parameterIndex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="title function_">say</span>(<span class="params"><span class="meta">@ParamDecorator</span> name: <span class="built_in">string</span>, <span class="meta">@ParamDecorator</span> age: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;my name is:&#x27;</span> + name, age + <span class="string">&#x27;years old&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line">myClass.<span class="title function_">say</span>(<span class="string">&#x27;xiaoli&#x27;</span>, <span class="number">18</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">target &#123;&#125;</span><br><span class="line">propertyKey say </span><br><span class="line">parameterIndex 1</span><br><span class="line">target &#123;&#125;       </span><br><span class="line">propertyKey say </span><br><span class="line">parameterIndex 0</span><br><span class="line">my name is:xiaoli 18years old</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="访问器装饰器"><a href="#访问器装饰器" class="headerlink" title="访问器装饰器"></a>访问器装饰器</h2><p>访问器装饰器的参数与方法装饰器一致。</p>
+<blockquote>
+<p>注意：不能同时装饰一个成员变量的get和set方法，当装饰一个访问器时，因为装饰器应用与一个属性描述符时，它联合了属性的get方法和set方法。</p>
+</blockquote>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function VisitorDecorator(target: Object, propertyKey: string, descriptor: PropertyDescriptor) &#123;</span><br><span class="line">    console.log(&#x27;target&#x27;, target);</span><br><span class="line">    console.log(&#x27;propertyKey&#x27;, propertyKey);</span><br><span class="line">    console.log(&#x27;descriptor&#x27;, descriptor);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyClass &#123;</span><br><span class="line">    private _name: string;</span><br><span class="line"></span><br><span class="line">    constructor(name: string) &#123;</span><br><span class="line">        this._name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   @VisitorDecorator</span><br><span class="line">   get name() &#123;</span><br><span class="line">       return this._name;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   set name(value: string) &#123;</span><br><span class="line">       this._name = value;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const myClass = new MyClass(&#x27;xiaoli&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">target &#123;&#125;</span><br><span class="line">propertyKey name</span><br><span class="line">descriptor &#123;</span><br><span class="line">  get: [Function: get name],</span><br><span class="line">  set: [Function: set name],</span><br><span class="line">  enumerable: false,</span><br><span class="line">  configurable: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="装饰器工厂"><a href="#装饰器工厂" class="headerlink" title="装饰器工厂"></a>装饰器工厂</h2><p>装饰器是用于返回一个装饰器的工厂函数。以<code>@DecoratorFactory(args)</code>形式调用。</p>
+<p>示例：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Decoratorfactory</span>(<span class="params">prefix: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">const</span> func = descriptor.<span class="property">value</span>;</span><br><span class="line">        descriptor.<span class="property">value</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;factoy:&#x27;</span>, prefix);</span><br><span class="line">            <span class="title function_">func</span>();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> descriptor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Decoratorfactory</span>(<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line">   <span class="title function_">say</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;my name is xiaoli&#x27;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myClass = <span class="keyword">new</span> <span class="title class_">MyClass</span>();</span><br><span class="line">myClass.<span class="title function_">say</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">factoy: hello</span><br><span class="line">my name is xiaoli</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://qcxhc.github.io/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" data-id="cluvaef7u0001c8qz2vy55klo" data-title="鸿蒙学习入门" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://qcxhc.github.io/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" data-id="cluvaef7u0001c8qz2vy55klo" data-title="TS装饰器" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -195,7 +351,11 @@
       <ul>
         
           <li>
-            <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">鸿蒙学习入门</a>
+            <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">TS装饰器</a>
           </li>
         
           <li>
