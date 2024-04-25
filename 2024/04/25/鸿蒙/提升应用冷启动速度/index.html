@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>提升应用冷启动速度 | 青春小火车车站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="应用冷启动的过程应用冷启动过程大致可分成以下四个阶段：应用进程创建&amp;初始化、Application&amp;Ability初始化、Ability&#x2F;AbilityStage生命周期、加载绘制首页，如下图：  1、缩短应用进程创建&amp;初始化阶段耗时该阶段主要是系统完成应用进程的创建以及初始化的过程，包含了启动页图标(startWindowIcon)的解码。 设置合适分辨率的st">
+<meta property="og:type" content="article">
+<meta property="og:title" content="提升应用冷启动速度">
+<meta property="og:url" content="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/index.html">
+<meta property="og:site_name" content="青春小火车车站">
+<meta property="og:description" content="应用冷启动的过程应用冷启动过程大致可分成以下四个阶段：应用进程创建&amp;初始化、Application&amp;Ability初始化、Ability&#x2F;AbilityStage生命周期、加载绘制首页，如下图：  1、缩短应用进程创建&amp;初始化阶段耗时该阶段主要是系统完成应用进程的创建以及初始化的过程，包含了启动页图标(startWindowIcon)的解码。 设置合适分辨率的st">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qcxhc.github.io/source/images/application-cold-start.png">
+<meta property="article:published_time" content="2024-04-25T05:15:15.000Z">
+<meta property="article:modified_time" content="2024-04-25T05:26:06.997Z">
+<meta property="article:author" content="青春小火车">
+<meta property="article:tag" content="鸿蒙">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qcxhc.github.io/source/images/application-cold-start.png">
+  
+    <link rel="alternate" href="/atom.xml" title="青春小火车车站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">青春小火车车站</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://qcxhc.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-鸿蒙/提升应用冷启动速度" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:15:15.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      提升应用冷启动速度
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="应用冷启动的过程"><a href="#应用冷启动的过程" class="headerlink" title="应用冷启动的过程"></a>应用冷启动的过程</h2><p>应用冷启动过程大致可分成以下四个阶段：应用进程创建&amp;初始化、Application&amp;Ability初始化、Ability&#x2F;AbilityStage生命周期、加载绘制首页，如下图：</p>
+<p><img src="/source/images/application-cold-start.png" alt="启动流程图"></p>
+<h3 id="1、缩短应用进程创建-初始化阶段耗时"><a href="#1、缩短应用进程创建-初始化阶段耗时" class="headerlink" title="1、缩短应用进程创建&amp;初始化阶段耗时"></a>1、缩短应用进程创建&amp;初始化阶段耗时</h3><p>该阶段主要是系统完成应用进程的创建以及初始化的过程，包含了启动页图标(startWindowIcon)的解码。</p>
+<h4 id="设置合适分辨率的startWindowIcon"><a href="#设置合适分辨率的startWindowIcon" class="headerlink" title="设置合适分辨率的startWindowIcon"></a>设置合适分辨率的startWindowIcon</h4><p>如果启动页图标分辨率过大，解码耗时会影响应用的启动速度，建议启动页图标分辨率不超过256像素*256像素。</p>
+<h3 id="2、缩短Application-Ability初始化阶段耗时"><a href="#2、缩短Application-Ability初始化阶段耗时" class="headerlink" title="2、缩短Application&amp;Ability初始化阶段耗时"></a>2、缩短Application&amp;Ability初始化阶段耗时</h3><p>该阶段主要是资源加载、虚拟机创建、Application&amp;Ability相关对象的创建与初始化、依赖模块的加载等。</p>
+<h4 id="减少import的模块"><a href="#减少import的模块" class="headerlink" title="减少import的模块"></a>减少import的模块</h4><p>应用代码执行前，应用程序必须找到并加载import的所有模块，应用程序加载的每个额外的第三方框架或者模块都会增加启动时间，耗时长短取决于加载的第三方框架或者模块的数量和大小。推荐开发者尽可能使用系统提供的模块，按需加载，来缩短应用程序的启动耗时。</p>
+<h3 id="3、缩短AbilityStage生命周期阶段耗时"><a href="#3、缩短AbilityStage生命周期阶段耗时" class="headerlink" title="3、缩短AbilityStage生命周期阶段耗时"></a>3、缩短AbilityStage生命周期阶段耗时</h3><p>该阶段主要是AbilityStage的启动生命周期，执行相应的生命周期回调。</p>
+<h4 id="避免在AbilityStage生命周期回调接口进行耗时操作"><a href="#避免在AbilityStage生命周期回调接口进行耗时操作" class="headerlink" title="避免在AbilityStage生命周期回调接口进行耗时操作"></a>避免在AbilityStage生命周期回调接口进行耗时操作</h4><p>在应用启动流程中，系统会执行AbilityStage的生命周期回调函数。因此，不建议在这些回调函数中执行耗时过长的操作，耗时操作建议通过异步任务延迟处理或者放到其他线程执行</p>
+<h3 id="4、缩短Ability生命周期阶段耗时"><a href="#4、缩短Ability生命周期阶段耗时" class="headerlink" title="4、缩短Ability生命周期阶段耗时"></a>4、缩短Ability生命周期阶段耗时</h3><p>该阶段主要是Ability的启动生命周期，执行相应的生命周期回调。</p>
+<h4 id="避免在Ability生命周期回调接口进行耗时操作"><a href="#避免在Ability生命周期回调接口进行耗时操作" class="headerlink" title="避免在Ability生命周期回调接口进行耗时操作"></a>避免在Ability生命周期回调接口进行耗时操作</h4><p>在应用启动流程中，系统会执行Ability的生命周期回调函数。因此，不建议在这些回调函数中执行耗时过长的操作，耗时操作建议通过异步任务延迟处理或者放到其他线程执行。</p>
+<h3 id="5、缩短加载绘制首页阶段耗时"><a href="#5、缩短加载绘制首页阶段耗时" class="headerlink" title="5、缩短加载绘制首页阶段耗时"></a>5、缩短加载绘制首页阶段耗时</h3><p>该阶段主要是加载首页内容、测量布局、刷新组件并绘制。</p>
+<h4 id="自定义组件生命周期回调接口里避免耗时操作"><a href="#自定义组件生命周期回调接口里避免耗时操作" class="headerlink" title="自定义组件生命周期回调接口里避免耗时操作"></a>自定义组件生命周期回调接口里避免耗时操作</h4><p>自定义组件的生命周期变更会调用相应的回调函数。</p>
+<p>aboutToAppear函数会在创建自定义组件实例后，页面绘制之前执行，以下代码在aboutToAppear中对耗时间的计算任务进行了异步处理，避免在该接口执行该耗时操作，不阻塞页面绘制。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" data-id="clvezpha40009ykqzacry89h9" data-title="提升应用冷启动速度" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Node-Api（NApi）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">异步并发（Promise和async/awit）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CMake/" style="font-size: 10px;">CMake</a> <a href="/tags/TypeScript/" style="font-size: 10px;">TypeScript</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/napi/" style="font-size: 10px;">napi</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 15px;">并发</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">异步并发</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" style="font-size: 10px;">服务卡片</a> <a href="/tags/%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">组件</a> <a href="/tags/%E7%BC%96%E8%AF%91/" style="font-size: 10px;">编译</a> <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" style="font-size: 10px;">装饰器</a> <a href="/tags/%E9%B8%BF%E8%92%99/" style="font-size: 20px;">鸿蒙</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 青春小火车<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

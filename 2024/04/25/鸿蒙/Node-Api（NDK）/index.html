@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Node-Api（NApi） | 青春小火车车站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="在HarmonyOS中，C API中的N-API接口可以实现ArkTS&#x2F;TS&#x2F;JS与C&#x2F;C++之间的交互。N-API提供的接口名与三方Node.js一致，目前支持部分接口。 NDKNDK（Native Development Kit）是OpenHarmony SDK提供的Native API、相应编译脚本和编译工具链的集合，方便开发者使用C或C++语言实现应用的关键功">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node-Api（NApi）">
+<meta property="og:url" content="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/index.html">
+<meta property="og:site_name" content="青春小火车车站">
+<meta property="og:description" content="在HarmonyOS中，C API中的N-API接口可以实现ArkTS&#x2F;TS&#x2F;JS与C&#x2F;C++之间的交互。N-API提供的接口名与三方Node.js一致，目前支持部分接口。 NDKNDK（Native Development Kit）是OpenHarmony SDK提供的Native API、相应编译脚本和编译工具链的集合，方便开发者使用C或C++语言实现应用的关键功">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-25T05:58:20.000Z">
+<meta property="article:modified_time" content="2024-04-25T07:28:15.164Z">
+<meta property="article:author" content="青春小火车">
+<meta property="article:tag" content="鸿蒙">
+<meta property="article:tag" content="napi">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="青春小火车车站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">青春小火车车站</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://qcxhc.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-鸿蒙/Node-Api（NDK）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:58:20.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Node-Api（NApi）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在HarmonyOS中，C API中的N-API接口可以实现ArkTS&#x2F;TS&#x2F;JS与C&#x2F;C++之间的交互。N-API提供的接口名与三方Node.js一致，目前支持部分接口。</p>
+<h2 id="NDK"><a href="#NDK" class="headerlink" title="NDK"></a>NDK</h2><p>NDK（Native Development Kit）是OpenHarmony SDK提供的Native API、相应编译脚本和编译工具链的集合，方便开发者使用C或C++语言实现应用的关键功能。NDK只覆盖了OpenHarmony一些基础的底层能力，如C运行时基础库libc、图形库、窗口系统、多媒体、压缩库、面向ArkTS&#x2F;JS与C跨语言的Node-API等，并没有提供ArkTS&#x2F;JS API的完整能力。</p>
+<p>运行态，开发者可以使用NDK中的Node-API接口，访问、创建、操作JS对象；也允许JS对象使用Native动态库。</p>
+<h2 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h2><p>在DevEco Studio的模板工程中包含使用N-API的默认工程，使用File-&gt;New-&gt;Create Project创建Native C++模板工程。创建后在entry&#x2F;src&#x2F;main目录下会包含cpp目录，可以使用N-API接口，开发C&#x2F;C++代码（native侧代码）。</p>
+<p>ArkTS&#x2F;TS&#x2F;JS侧通过import引入native侧的so文件，如：import hello from ‘libhello.so’，意为使用libhello.so的能力，并将名为hello的ArkTS&#x2F;TS&#x2F;JS对象给到应用的ArkTS&#x2F;TS&#x2F;JS侧，开发者可通过该对象，调用到在cpp中开发的native方法。</p>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><h4 id="C-侧代码："><a href="#C-侧代码：" class="headerlink" title="C++侧代码："></a>C++侧代码：</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\cpp\hello.cpp</span></span><br><span class="line"><span class="comment">// 引入N-API相关头文件。</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;napi/native_api.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 开发者提供的native方法，入参有且仅有如下两个，开发者不需进行变更。</span></span><br><span class="line"><span class="comment">// napi_env 为当前运行的上下文。</span></span><br><span class="line"><span class="comment">// napi_callback_info 记录了一些信息，包括从ArkTS侧传递过来参数等。</span></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">Add</span><span class="params">(napi_env env, napi_callback_info info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 期望从ArkTS侧获取的参数的数量，napi_value可理解为ArkTS value在native方法中的表现形式。</span></span><br><span class="line">    <span class="type">size_t</span> argc = <span class="number">2</span>;</span><br><span class="line">    napi_value args[<span class="number">2</span>] = &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从info中，拿到从ArkTS侧传递过来的参数，此处获取了两个ArkTS参数，即arg[0]和arg[1]。</span></span><br><span class="line">    <span class="built_in">napi_get_cb_info</span>(env, info, &amp;argc, args , <span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将获取的ArkTS参数转换为native信息，此处ArkTS侧传入了两个number，这里将其转换为native侧可以操作的double类型。</span></span><br><span class="line">    <span class="type">double</span> value0;</span><br><span class="line">    <span class="built_in">napi_get_value_double</span>(env, args[<span class="number">0</span>], &amp;value0);</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> value1;</span><br><span class="line">    <span class="built_in">napi_get_value_double</span>(env, args[<span class="number">1</span>], &amp;value1);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// native侧的业务逻辑，这里简单以两数相加为例。</span></span><br><span class="line">    <span class="type">double</span> nativeSum = value0 + value1;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 此处将native侧业务逻辑处理结果转换为ArkTS值，并返回给ArkTS。</span></span><br><span class="line">    napi_value sum;</span><br><span class="line">    <span class="built_in">napi_create_double</span>(env, nativeSum , &amp;sum);</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">NativeCallArkTS</span><span class="params">(napi_env env, napi_callback_info info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 期望从ArkTS侧获取的参数的数量，napi_value可理解为ArkTS value在native方法中的表现形式。</span></span><br><span class="line">    <span class="type">size_t</span> argc = <span class="number">1</span>;</span><br><span class="line">    napi_value args[<span class="number">1</span>] = &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从info中，拿到从ArkTS侧传递过来的参数，此处获取了一个ArkTS参数，即arg[0]。</span></span><br><span class="line">    <span class="built_in">napi_get_cb_info</span>(env, info, &amp;argc, args , <span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 创建一个ArkTS number作为ArkTS function的入参。</span></span><br><span class="line">    napi_value argv = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="built_in">napi_create_int32</span>(env, <span class="number">10</span>, &amp;argv);</span><br><span class="line">    </span><br><span class="line">    napi_value result = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="comment">// native方法中调用ArkTS function，其返回值保存到result中并返到ArkTS侧。</span></span><br><span class="line">    <span class="built_in">napi_call_function</span>(env, <span class="literal">nullptr</span>, args[<span class="number">0</span>], <span class="number">1</span>, &amp;argv, &amp;result);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">EXTERN_C_START</span><br><span class="line"><span class="comment">// Init将在exports上挂上Add/NativeCallArkTS这些native方法，此处的exports就是开发者import之后获取到的ArkTS对象。</span></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">Init</span><span class="params">(napi_env env, napi_value exports)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 函数描述结构体，以Add为例，第三个参数&quot;Add&quot;为上述的native方法，</span></span><br><span class="line">    <span class="comment">// 第一个参数&quot;add&quot;为ArkTS侧对应方法的名称。</span></span><br><span class="line">    napi_property_descriptor desc[] = &#123;</span><br><span class="line">        &#123; <span class="string">&quot;add&quot;</span>, <span class="literal">nullptr</span>, Add, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, napi_default, <span class="literal">nullptr</span> &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;nativeCallArkTS&quot;</span>, <span class="literal">nullptr</span>, NativeCallArkTS, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, napi_default, <span class="literal">nullptr</span> &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 在exports这个ArkTS对象上，挂载native方法。</span></span><br><span class="line">    <span class="built_in">napi_define_properties</span>(env, exports, <span class="built_in">sizeof</span>(desc) / <span class="built_in">sizeof</span>(desc[<span class="number">0</span>]), desc);</span><br><span class="line">    <span class="keyword">return</span> exports;</span><br><span class="line">&#125;</span><br><span class="line">EXTERN_C_END</span><br><span class="line"></span><br><span class="line"><span class="comment">// 准备模块加载相关信息，将上述Init函数与本模块名等信息记录下来。</span></span><br><span class="line"><span class="type">static</span> napi_module demoModule = &#123;</span><br><span class="line">    .nm_version =<span class="number">1</span>,</span><br><span class="line">    .nm_flags = <span class="number">0</span>,</span><br><span class="line">    .nm_filename = <span class="literal">nullptr</span>,</span><br><span class="line">    .nm_register_func = Init,</span><br><span class="line">    .nm_modname = <span class="string">&quot;entry&quot;</span>,</span><br><span class="line">    .nm_priv = ((<span class="type">void</span>*)<span class="number">0</span>),</span><br><span class="line">    .reserved = &#123; <span class="number">0</span> &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开so时，该函数将自动被调用，使用上述demoModule模块信息，进行模块注册相关动作。</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> __attribute__((constructor)) <span class="function"><span class="type">void</span> <span class="title">RegisterHelloModule</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">napi_module_register</span>(&amp;demoModule);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CMakeLists-txt文件中配置CMake打包参数："><a href="#CMakeLists-txt文件中配置CMake打包参数：" class="headerlink" title="CMakeLists.txt文件中配置CMake打包参数："></a>CMakeLists.txt文件中配置CMake打包参数：</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># entry/src/main/cpp/CMakeLists.txt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 确定CMake的最小版本号。</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义项目名称</span></span><br><span class="line"><span class="keyword">project</span>(MyApplication2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置项目根目录。</span></span><br><span class="line"><span class="keyword">set</span>(NATIVERENDER_ROOT_PATH <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置头文件搜索路径。</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;NATIVERENDER_ROOT_PATH&#125;</span></span><br><span class="line">                    <span class="variable">$&#123;NATIVERENDER_ROOT_PATH&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加名为entry的库</span></span><br><span class="line"><span class="comment"># entry 库名称</span></span><br><span class="line"><span class="comment"># SHARED 库类型（SHARE：动态库，STATIC：静态库）</span></span><br><span class="line"><span class="comment"># hello.cpp 库包含的源文件</span></span><br><span class="line"><span class="keyword">add_library</span>(entry SHARED hello.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建此可执行文件需要链接的库</span></span><br><span class="line"><span class="comment"># target 需要连接的库文件的目标文件</span></span><br><span class="line"><span class="comment"># PUBLIC 链接库类型，默认PUBLIC</span></span><br><span class="line"><span class="comment"># libace_napi.z.so 需要链接库的名称</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(entry PUBLIC libace_napi.z.so)</span><br></pre></td></tr></table></figure>
+
+<h4 id="C-暴露给ArkTS测接口声明："><a href="#C-暴露给ArkTS测接口声明：" class="headerlink" title="C++暴露给ArkTS测接口声明："></a>C++暴露给ArkTS测接口声明：</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\cpp\types\libentry\index.d.ts</span></span><br><span class="line"><span class="comment">// native侧暴露给ArkTS侧接口的声明。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">add</span>: <span class="function">(<span class="params">a: <span class="built_in">number</span>, b: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">nativeCallArkTS</span>: <span class="function">(<span class="params">a: <span class="built_in">object</span></span>) =&gt;</span> <span class="built_in">number</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ArkTS侧代码："><a href="#ArkTS侧代码：" class="headerlink" title="ArkTS侧代码："></a>ArkTS侧代码：</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\ets\pages\index.ets</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> hilog <span class="keyword">from</span> <span class="string">&#x27;@ohos.hilog&#x27;</span>;</span><br><span class="line"><span class="comment">// 通过import的方式，引入native能力。</span></span><br><span class="line"><span class="keyword">import</span> entry <span class="keyword">from</span> <span class="string">&#x27;libentry.so&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Entry</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line">struct <span class="title class_">Index</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">build</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title class_">Row</span>() &#123;</span><br><span class="line">      <span class="title class_">Column</span>() &#123;</span><br><span class="line">        <span class="comment">// 第一个按钮，调用add方法，对应到native侧的Add方法，进行两数相加。</span></span><br><span class="line">        <span class="title class_">Button</span>(<span class="string">&#x27;ArkTS call C++&#x27;</span>)</span><br><span class="line">          .<span class="title function_">fontSize</span>(<span class="number">50</span>)</span><br><span class="line">          .<span class="title function_">fontWeight</span>(<span class="title class_">FontWeight</span>.<span class="property">Bold</span>)</span><br><span class="line">          .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            hilog.<span class="title function_">isLoggable</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, hilog.<span class="property">LogLevel</span>.<span class="property">INFO</span>);</span><br><span class="line">            hilog.<span class="title function_">info</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, <span class="string">&#x27;Test NAPI 2 + 3 = %&#123;public&#125;d&#x27;</span>, entry.<span class="title function_">add</span>(<span class="number">2</span>, <span class="number">3</span>));</span><br><span class="line">          &#125;)</span><br><span class="line">        <span class="comment">// 第二个按钮，调用nativeCallArkTS方法，对应到native的NativeCallArkTS，在native中执行ArkTS function。</span></span><br><span class="line">        <span class="title class_">Button</span>(<span class="string">&#x27;C++ call ArkTS&#x27;</span>)</span><br><span class="line">          .<span class="title function_">fontSize</span>(<span class="number">50</span>)</span><br><span class="line">          .<span class="title function_">fontWeight</span>(<span class="title class_">FontWeight</span>.<span class="property">Bold</span>)</span><br><span class="line">          .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            hilog.<span class="title function_">isLoggable</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, hilog.<span class="property">LogLevel</span>.<span class="property">INFO</span>);</span><br><span class="line">            <span class="keyword">let</span> ret = entry.<span class="title function_">nativeCallArkTS</span>(<span class="function">(<span class="params">value</span>)=&gt;</span>&#123;<span class="keyword">return</span> value * <span class="number">2</span>;&#125;);</span><br><span class="line">            hilog.<span class="title function_">info</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, <span class="string">&#x27;Test NAPI nativeCallArkTS ret = %&#123;public&#125;d&#x27;</span>, ret);</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      .<span class="title function_">width</span>(<span class="string">&#x27;100%&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    .<span class="title function_">height</span>(<span class="string">&#x27;100%&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/" data-id="clvezpha00003ykqz29ixgu7r" data-title="Node-Api（NApi）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">提升应用冷启动速度</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CMake/" style="font-size: 10px;">CMake</a> <a href="/tags/TypeScript/" style="font-size: 10px;">TypeScript</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/napi/" style="font-size: 10px;">napi</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 15px;">并发</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">异步并发</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" style="font-size: 10px;">服务卡片</a> <a href="/tags/%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">组件</a> <a href="/tags/%E7%BC%96%E8%AF%91/" style="font-size: 10px;">编译</a> <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" style="font-size: 10px;">装饰器</a> <a href="/tags/%E9%B8%BF%E8%92%99/" style="font-size: 20px;">鸿蒙</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 青春小火车<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

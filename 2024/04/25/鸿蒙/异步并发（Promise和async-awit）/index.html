@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>异步并发（Promise和async/awit） | 青春小火车车站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="简介Promise和async&#x2F;await提供异步并发能力，是标准的JS异步语法。异步代码会被挂起并在之后继续执行，同一时间只有一段代码执行，适用于单次I&#x2F;O任务的场景开发，例如一次网络请求、一次文件读写等操作。 异步语法是一种编程语言的特性，允许程序在执行某些操作时不必等待其完成，而是可以继续执行其他操作。 PromisePromise是一种用于处理异步操作的对象，可以将异步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异步并发（Promise和async&#x2F;awit）">
+<meta property="og:url" content="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/index.html">
+<meta property="og:site_name" content="青春小火车车站">
+<meta property="og:description" content="简介Promise和async&#x2F;await提供异步并发能力，是标准的JS异步语法。异步代码会被挂起并在之后继续执行，同一时间只有一段代码执行，适用于单次I&#x2F;O任务的场景开发，例如一次网络请求、一次文件读写等操作。 异步语法是一种编程语言的特性，允许程序在执行某些操作时不必等待其完成，而是可以继续执行其他操作。 PromisePromise是一种用于处理异步操作的对象，可以将异步">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-25T05:11:16.000Z">
+<meta property="article:modified_time" content="2024-04-25T05:58:26.296Z">
+<meta property="article:author" content="青春小火车">
+<meta property="article:tag" content="鸿蒙">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="异步并发">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="青春小火车车站" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">青春小火车车站</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://qcxhc.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-鸿蒙/异步并发（Promise和async-awit）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:11:16.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      异步并发（Promise和async/awit）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Promise和async&#x2F;await提供异步并发能力，是标准的JS异步语法。异步代码会被挂起并在之后继续执行，同一时间只有一段代码执行，适用于单次I&#x2F;O任务的场景开发，例如一次网络请求、一次文件读写等操作。</p>
+<p>异步语法是一种编程语言的特性，允许程序在执行某些操作时不必等待其完成，而是可以继续执行其他操作。</p>
+<h2 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h2><p>Promise是一种用于处理异步操作的对象，可以将异步操作转换为类似于同步操作的风格，以方便代码编写和维护。Promise提供了一个状态机制来管理异步操作的不同阶段，并提供了一些方法来注册回调函数以处理异步操作的成功或失败的结果。</p>
+<p>Promise有三种状态：pending（进行中）、fulfilled（已完成）和rejected（已拒绝）。Promise对象创建后处于pending状态，并在异步操作完成后转换为fulfilled或rejected状态。</p>
+<p>最基本的用法是通过构造函数实例化一个Promise对象，同时传入一个带有两个参数的函数，通常称为executor函数。executor函数接收两个参数：resolve和reject，分别表示异步操作成功和失败时的回调函数。例如，以下代码创建了一个Promise对象并模拟了一个异步操作：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="attr">promise</span>: <span class="title class_">Promise</span>&lt;<span class="built_in">number</span>&gt; = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span>, reject: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">randomNumber</span>: <span class="built_in">number</span> = <span class="title class_">Math</span>.<span class="title function_">random</span>();</span><br><span class="line">  <span class="keyword">if</span> (randomNumber &gt; <span class="number">0.5</span>) &#123;</span><br><span class="line">    <span class="title function_">resolve</span>(randomNumber);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_">reject</span>(<span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Random number is too small&#x27;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;)</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">const</span> <span class="attr">promise</span>: <span class="title class_">Promise</span>&lt;<span class="built_in">number</span>&gt; = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span>, reject: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">randomNumber</span>: <span class="built_in">number</span> = <span class="title class_">Math</span>.<span class="title function_">random</span>();</span><br><span class="line">  <span class="keyword">if</span> (randomNumber &gt; <span class="number">0.5</span>) &#123;</span><br><span class="line">    <span class="title function_">resolve</span>(randomNumber);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_">reject</span>(<span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Random number is too small&#x27;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中，setTimeout函数模拟了一个异步操作，并在1秒钟后随机生成一个数字。如果随机数大于0.5，则执行resolve回调函数并将随机数作为参数传递；否则执行reject回调函数并传递一个错误对象作为参数。</p>
+<p>Promise对象创建后，可以使用then方法和catch方法指定fulfilled状态和rejected状态的回调函数。then方法可接受两个参数，一个处理fulfilled状态的函数，另一个处理rejected状态的函数。只传一个参数则表示当Promise对象状态变为fulfilled时，then方法会自动调用这个回调函数，并将Promise对象的结果作为参数传递给它。使用catch方法注册一个回调函数，用于处理“失败”的结果，即捕获Promise的状态改变为rejected状态或操作失败抛出的异常。例如：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">BusinessError</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.base&#x27;</span>;</span><br><span class="line"></span><br><span class="line">promise.<span class="title function_">then</span>(<span class="function">(<span class="params">result: <span class="built_in">number</span></span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`Random number is <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">error: BusinessError</span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">error</span>(error.<span class="property">message</span>);</span><br><span class="line">&#125;);</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">BusinessError</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.base&#x27;</span>;</span><br><span class="line"></span><br><span class="line">promise.<span class="title function_">then</span>(<span class="function">(<span class="params">result: <span class="built_in">number</span></span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`Random number is <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">error: BusinessError</span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">error</span>(error.<span class="property">message</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中，then方法的回调函数接收Promise对象的成功结果作为参数，并将其输出到控制台上。如果Promise对象进入rejected状态，则catch方法的回调函数接收错误对象作为参数，并将其输出到控制台上。</p>
+<p>async&#x2F;await<br>async&#x2F;await是一种用于处理异步操作的Promise语法糖，使得编写异步代码变得更加简单和易读。通过使用async关键字声明一个函数为异步函数，并使用await关键字等待Promise的解析（完成或拒绝），以同步的方式编写异步操作的代码。</p>
+<p>async函数是一个返回Promise对象的函数，用于表示一个异步操作。在async函数内部，可以使用await关键字等待一个Promise对象的解析，并返回其解析值。如果一个async函数抛出异常，那么该函数返回的Promise对象将被拒绝，并且异常信息会被传递给Promise对象的onRejected()方法。</p>
+<p>下面是一个使用async&#x2F;await的例子，其中模拟了一个异步操作，该操作会在3秒钟后返回一个字符串。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">info</span>(result); <span class="comment">// 输出： Hello, world!</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">info</span>(result); <span class="comment">// 输出： Hello, world!</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br></pre></td></tr></table></figure>
+<p>在上述示例代码中，使用了await关键字来等待Promise对象的解析，并将其解析值存储在result变量中。</p>
+<p>需要注意的是，由于要等待异步操作完成，因此需要将整个操作包在async函数中。除了在async函数中使用await外，还可以使用try&#x2F;catch块来捕获异步操作中的异常。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">`Get exception: <span class="subst">$&#123;e&#125;</span>`</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/" data-id="clvezpha30007ykqz9nlfedaa" data-title="异步并发（Promise和async/awit）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          提升应用冷启动速度
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">并发</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CMake/" style="font-size: 10px;">CMake</a> <a href="/tags/TypeScript/" style="font-size: 10px;">TypeScript</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/napi/" style="font-size: 10px;">napi</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 15px;">并发</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">异步并发</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" style="font-size: 10px;">服务卡片</a> <a href="/tags/%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">组件</a> <a href="/tags/%E7%BC%96%E8%AF%91/" style="font-size: 10px;">编译</a> <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" style="font-size: 10px;">装饰器</a> <a href="/tags/%E9%B8%BF%E8%92%99/" style="font-size: 20px;">鸿蒙</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 青春小火车<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

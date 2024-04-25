@@ -9,13 +9,15 @@
   <meta name="description" content="装饰器介绍装饰器（Decorator）是TS中的语法特性，用来对类进行装饰加工，可以被附加到类声明、属性、方法、访问器或参数等目标上。 装饰器本质是一个函数，比如一个装饰器名为decorator，以@decorator的形式使用。装饰器对目标的改变是在代码编译时发生的，编译后的代码中，定义被修饰目标时，装饰器函数会被调用，被装饰的目标的相关数据会被作为参数传入装饰器函数中。 类装饰器当装饰器用于修">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TS装饰器">
-<meta property="og:url" content="https://qcxhc.github.io/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:url" content="https://qcxhc.github.io/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">
 <meta property="og:site_name" content="青春小火车车站">
 <meta property="og:description" content="装饰器介绍装饰器（Decorator）是TS中的语法特性，用来对类进行装饰加工，可以被附加到类声明、属性、方法、访问器或参数等目标上。 装饰器本质是一个函数，比如一个装饰器名为decorator，以@decorator的形式使用。装饰器对目标的改变是在代码编译时发生的，编译后的代码中，定义被修饰目标时，装饰器函数会被调用，被装饰的目标的相关数据会被作为参数传入装饰器函数中。 类装饰器当装饰器用于修">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-11T12:50:05.000Z">
-<meta property="article:modified_time" content="2024-04-15T17:17:38.837Z">
+<meta property="article:modified_time" content="2024-04-25T05:51:57.020Z">
 <meta property="article:author" content="青春小火车">
+<meta property="article:tag" content="TypeScript">
+<meta property="article:tag" content="装饰器">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="青春小火车车站" type="application/atom+xml">
@@ -71,9 +73,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-鸿蒙学习入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-其他/TS装饰器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="article-date">
+    <a href="/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/" class="article-date">
   <time class="dt-published" datetime="2024-04-11T12:50:05.000Z" itemprop="datePublished">2024-04-11</time>
 </a>
     
@@ -167,17 +169,19 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://qcxhc.github.io/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" data-id="cluvaef7u0001c8qz2vy55klo" data-title="TS装饰器" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://qcxhc.github.io/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/" data-id="clvezph9t0000ykqzequm0kqn" data-title="TS装饰器" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/04/13/%E9%B8%BF%E8%92%99/Web%E7%BB%84%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
       <div class="article-nav-title">
         
@@ -206,9 +210,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CMake/" style="font-size: 10px;">CMake</a> <a href="/tags/TypeScript/" style="font-size: 10px;">TypeScript</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/napi/" style="font-size: 10px;">napi</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 15px;">并发</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">异步并发</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" style="font-size: 10px;">服务卡片</a> <a href="/tags/%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">组件</a> <a href="/tags/%E7%BC%96%E8%AF%91/" style="font-size: 10px;">编译</a> <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" style="font-size: 10px;">装饰器</a> <a href="/tags/%E9%B8%BF%E8%92%99/" style="font-size: 20px;">鸿蒙</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -227,15 +245,23 @@
       <ul>
         
           <li>
-            <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
           </li>
         
           <li>
-            <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">TS装饰器</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
           </li>
         
           <li>
-            <a href="/2024/04/10/hello-world/">Hello World</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
           </li>
         
       </ul>

@@ -69,9 +69,643 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Web组件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-鸿蒙/Node-Api（NDK）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/" class="article-date">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:58:20.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在HarmonyOS中，C API中的N-API接口可以实现ArkTS&#x2F;TS&#x2F;JS与C&#x2F;C++之间的交互。N-API提供的接口名与三方Node.js一致，目前支持部分接口。</p>
+<h2 id="NDK"><a href="#NDK" class="headerlink" title="NDK"></a>NDK</h2><p>NDK（Native Development Kit）是OpenHarmony SDK提供的Native API、相应编译脚本和编译工具链的集合，方便开发者使用C或C++语言实现应用的关键功能。NDK只覆盖了OpenHarmony一些基础的底层能力，如C运行时基础库libc、图形库、窗口系统、多媒体、压缩库、面向ArkTS&#x2F;JS与C跨语言的Node-API等，并没有提供ArkTS&#x2F;JS API的完整能力。</p>
+<p>运行态，开发者可以使用NDK中的Node-API接口，访问、创建、操作JS对象；也允许JS对象使用Native动态库。</p>
+<h2 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h2><p>在DevEco Studio的模板工程中包含使用N-API的默认工程，使用File-&gt;New-&gt;Create Project创建Native C++模板工程。创建后在entry&#x2F;src&#x2F;main目录下会包含cpp目录，可以使用N-API接口，开发C&#x2F;C++代码（native侧代码）。</p>
+<p>ArkTS&#x2F;TS&#x2F;JS侧通过import引入native侧的so文件，如：import hello from ‘libhello.so’，意为使用libhello.so的能力，并将名为hello的ArkTS&#x2F;TS&#x2F;JS对象给到应用的ArkTS&#x2F;TS&#x2F;JS侧，开发者可通过该对象，调用到在cpp中开发的native方法。</p>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><h4 id="C-侧代码："><a href="#C-侧代码：" class="headerlink" title="C++侧代码："></a>C++侧代码：</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\cpp\hello.cpp</span></span><br><span class="line"><span class="comment">// 引入N-API相关头文件。</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;napi/native_api.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 开发者提供的native方法，入参有且仅有如下两个，开发者不需进行变更。</span></span><br><span class="line"><span class="comment">// napi_env 为当前运行的上下文。</span></span><br><span class="line"><span class="comment">// napi_callback_info 记录了一些信息，包括从ArkTS侧传递过来参数等。</span></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">Add</span><span class="params">(napi_env env, napi_callback_info info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 期望从ArkTS侧获取的参数的数量，napi_value可理解为ArkTS value在native方法中的表现形式。</span></span><br><span class="line">    <span class="type">size_t</span> argc = <span class="number">2</span>;</span><br><span class="line">    napi_value args[<span class="number">2</span>] = &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从info中，拿到从ArkTS侧传递过来的参数，此处获取了两个ArkTS参数，即arg[0]和arg[1]。</span></span><br><span class="line">    <span class="built_in">napi_get_cb_info</span>(env, info, &amp;argc, args , <span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将获取的ArkTS参数转换为native信息，此处ArkTS侧传入了两个number，这里将其转换为native侧可以操作的double类型。</span></span><br><span class="line">    <span class="type">double</span> value0;</span><br><span class="line">    <span class="built_in">napi_get_value_double</span>(env, args[<span class="number">0</span>], &amp;value0);</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> value1;</span><br><span class="line">    <span class="built_in">napi_get_value_double</span>(env, args[<span class="number">1</span>], &amp;value1);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// native侧的业务逻辑，这里简单以两数相加为例。</span></span><br><span class="line">    <span class="type">double</span> nativeSum = value0 + value1;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 此处将native侧业务逻辑处理结果转换为ArkTS值，并返回给ArkTS。</span></span><br><span class="line">    napi_value sum;</span><br><span class="line">    <span class="built_in">napi_create_double</span>(env, nativeSum , &amp;sum);</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">NativeCallArkTS</span><span class="params">(napi_env env, napi_callback_info info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 期望从ArkTS侧获取的参数的数量，napi_value可理解为ArkTS value在native方法中的表现形式。</span></span><br><span class="line">    <span class="type">size_t</span> argc = <span class="number">1</span>;</span><br><span class="line">    napi_value args[<span class="number">1</span>] = &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从info中，拿到从ArkTS侧传递过来的参数，此处获取了一个ArkTS参数，即arg[0]。</span></span><br><span class="line">    <span class="built_in">napi_get_cb_info</span>(env, info, &amp;argc, args , <span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 创建一个ArkTS number作为ArkTS function的入参。</span></span><br><span class="line">    napi_value argv = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="built_in">napi_create_int32</span>(env, <span class="number">10</span>, &amp;argv);</span><br><span class="line">    </span><br><span class="line">    napi_value result = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="comment">// native方法中调用ArkTS function，其返回值保存到result中并返到ArkTS侧。</span></span><br><span class="line">    <span class="built_in">napi_call_function</span>(env, <span class="literal">nullptr</span>, args[<span class="number">0</span>], <span class="number">1</span>, &amp;argv, &amp;result);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">EXTERN_C_START</span><br><span class="line"><span class="comment">// Init将在exports上挂上Add/NativeCallArkTS这些native方法，此处的exports就是开发者import之后获取到的ArkTS对象。</span></span><br><span class="line"><span class="function"><span class="type">static</span> napi_value <span class="title">Init</span><span class="params">(napi_env env, napi_value exports)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 函数描述结构体，以Add为例，第三个参数&quot;Add&quot;为上述的native方法，</span></span><br><span class="line">    <span class="comment">// 第一个参数&quot;add&quot;为ArkTS侧对应方法的名称。</span></span><br><span class="line">    napi_property_descriptor desc[] = &#123;</span><br><span class="line">        &#123; <span class="string">&quot;add&quot;</span>, <span class="literal">nullptr</span>, Add, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, napi_default, <span class="literal">nullptr</span> &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;nativeCallArkTS&quot;</span>, <span class="literal">nullptr</span>, NativeCallArkTS, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, napi_default, <span class="literal">nullptr</span> &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 在exports这个ArkTS对象上，挂载native方法。</span></span><br><span class="line">    <span class="built_in">napi_define_properties</span>(env, exports, <span class="built_in">sizeof</span>(desc) / <span class="built_in">sizeof</span>(desc[<span class="number">0</span>]), desc);</span><br><span class="line">    <span class="keyword">return</span> exports;</span><br><span class="line">&#125;</span><br><span class="line">EXTERN_C_END</span><br><span class="line"></span><br><span class="line"><span class="comment">// 准备模块加载相关信息，将上述Init函数与本模块名等信息记录下来。</span></span><br><span class="line"><span class="type">static</span> napi_module demoModule = &#123;</span><br><span class="line">    .nm_version =<span class="number">1</span>,</span><br><span class="line">    .nm_flags = <span class="number">0</span>,</span><br><span class="line">    .nm_filename = <span class="literal">nullptr</span>,</span><br><span class="line">    .nm_register_func = Init,</span><br><span class="line">    .nm_modname = <span class="string">&quot;entry&quot;</span>,</span><br><span class="line">    .nm_priv = ((<span class="type">void</span>*)<span class="number">0</span>),</span><br><span class="line">    .reserved = &#123; <span class="number">0</span> &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开so时，该函数将自动被调用，使用上述demoModule模块信息，进行模块注册相关动作。</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> __attribute__((constructor)) <span class="function"><span class="type">void</span> <span class="title">RegisterHelloModule</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">napi_module_register</span>(&amp;demoModule);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CMakeLists-txt文件中配置CMake打包参数："><a href="#CMakeLists-txt文件中配置CMake打包参数：" class="headerlink" title="CMakeLists.txt文件中配置CMake打包参数："></a>CMakeLists.txt文件中配置CMake打包参数：</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># entry/src/main/cpp/CMakeLists.txt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 确定CMake的最小版本号。</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义项目名称</span></span><br><span class="line"><span class="keyword">project</span>(MyApplication2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置项目根目录。</span></span><br><span class="line"><span class="keyword">set</span>(NATIVERENDER_ROOT_PATH <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置头文件搜索路径。</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;NATIVERENDER_ROOT_PATH&#125;</span></span><br><span class="line">                    <span class="variable">$&#123;NATIVERENDER_ROOT_PATH&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加名为entry的库</span></span><br><span class="line"><span class="comment"># entry 库名称</span></span><br><span class="line"><span class="comment"># SHARED 库类型（SHARE：动态库，STATIC：静态库）</span></span><br><span class="line"><span class="comment"># hello.cpp 库包含的源文件</span></span><br><span class="line"><span class="keyword">add_library</span>(entry SHARED hello.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建此可执行文件需要链接的库</span></span><br><span class="line"><span class="comment"># target 需要连接的库文件的目标文件</span></span><br><span class="line"><span class="comment"># PUBLIC 链接库类型，默认PUBLIC</span></span><br><span class="line"><span class="comment"># libace_napi.z.so 需要链接库的名称</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(entry PUBLIC libace_napi.z.so)</span><br></pre></td></tr></table></figure>
+
+<h4 id="C-暴露给ArkTS测接口声明："><a href="#C-暴露给ArkTS测接口声明：" class="headerlink" title="C++暴露给ArkTS测接口声明："></a>C++暴露给ArkTS测接口声明：</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\cpp\types\libentry\index.d.ts</span></span><br><span class="line"><span class="comment">// native侧暴露给ArkTS侧接口的声明。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">add</span>: <span class="function">(<span class="params">a: <span class="built_in">number</span>, b: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">nativeCallArkTS</span>: <span class="function">(<span class="params">a: <span class="built_in">object</span></span>) =&gt;</span> <span class="built_in">number</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ArkTS侧代码："><a href="#ArkTS侧代码：" class="headerlink" title="ArkTS侧代码："></a>ArkTS侧代码：</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry\src\main\ets\pages\index.ets</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> hilog <span class="keyword">from</span> <span class="string">&#x27;@ohos.hilog&#x27;</span>;</span><br><span class="line"><span class="comment">// 通过import的方式，引入native能力。</span></span><br><span class="line"><span class="keyword">import</span> entry <span class="keyword">from</span> <span class="string">&#x27;libentry.so&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Entry</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line">struct <span class="title class_">Index</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">build</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title class_">Row</span>() &#123;</span><br><span class="line">      <span class="title class_">Column</span>() &#123;</span><br><span class="line">        <span class="comment">// 第一个按钮，调用add方法，对应到native侧的Add方法，进行两数相加。</span></span><br><span class="line">        <span class="title class_">Button</span>(<span class="string">&#x27;ArkTS call C++&#x27;</span>)</span><br><span class="line">          .<span class="title function_">fontSize</span>(<span class="number">50</span>)</span><br><span class="line">          .<span class="title function_">fontWeight</span>(<span class="title class_">FontWeight</span>.<span class="property">Bold</span>)</span><br><span class="line">          .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            hilog.<span class="title function_">isLoggable</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, hilog.<span class="property">LogLevel</span>.<span class="property">INFO</span>);</span><br><span class="line">            hilog.<span class="title function_">info</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, <span class="string">&#x27;Test NAPI 2 + 3 = %&#123;public&#125;d&#x27;</span>, entry.<span class="title function_">add</span>(<span class="number">2</span>, <span class="number">3</span>));</span><br><span class="line">          &#125;)</span><br><span class="line">        <span class="comment">// 第二个按钮，调用nativeCallArkTS方法，对应到native的NativeCallArkTS，在native中执行ArkTS function。</span></span><br><span class="line">        <span class="title class_">Button</span>(<span class="string">&#x27;C++ call ArkTS&#x27;</span>)</span><br><span class="line">          .<span class="title function_">fontSize</span>(<span class="number">50</span>)</span><br><span class="line">          .<span class="title function_">fontWeight</span>(<span class="title class_">FontWeight</span>.<span class="property">Bold</span>)</span><br><span class="line">          .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            hilog.<span class="title function_">isLoggable</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, hilog.<span class="property">LogLevel</span>.<span class="property">INFO</span>);</span><br><span class="line">            <span class="keyword">let</span> ret = entry.<span class="title function_">nativeCallArkTS</span>(<span class="function">(<span class="params">value</span>)=&gt;</span>&#123;<span class="keyword">return</span> value * <span class="number">2</span>;&#125;);</span><br><span class="line">            hilog.<span class="title function_">info</span>(<span class="number">0x0000</span>, <span class="string">&#x27;testTag&#x27;</span>, <span class="string">&#x27;Test NAPI nativeCallArkTS ret = %&#123;public&#125;d&#x27;</span>, ret);</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      .<span class="title function_">width</span>(<span class="string">&#x27;100%&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    .<span class="title function_">height</span>(<span class="string">&#x27;100%&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/" data-id="clvezpha00003ykqz29ixgu7r" data-title="Node-Api（NApi）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/提升应用冷启动速度" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:15:15.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="应用冷启动的过程"><a href="#应用冷启动的过程" class="headerlink" title="应用冷启动的过程"></a>应用冷启动的过程</h2><p>应用冷启动过程大致可分成以下四个阶段：应用进程创建&amp;初始化、Application&amp;Ability初始化、Ability&#x2F;AbilityStage生命周期、加载绘制首页，如下图：</p>
+<p><img src="/source/images/application-cold-start.png" alt="启动流程图"></p>
+<h3 id="1、缩短应用进程创建-初始化阶段耗时"><a href="#1、缩短应用进程创建-初始化阶段耗时" class="headerlink" title="1、缩短应用进程创建&amp;初始化阶段耗时"></a>1、缩短应用进程创建&amp;初始化阶段耗时</h3><p>该阶段主要是系统完成应用进程的创建以及初始化的过程，包含了启动页图标(startWindowIcon)的解码。</p>
+<h4 id="设置合适分辨率的startWindowIcon"><a href="#设置合适分辨率的startWindowIcon" class="headerlink" title="设置合适分辨率的startWindowIcon"></a>设置合适分辨率的startWindowIcon</h4><p>如果启动页图标分辨率过大，解码耗时会影响应用的启动速度，建议启动页图标分辨率不超过256像素*256像素。</p>
+<h3 id="2、缩短Application-Ability初始化阶段耗时"><a href="#2、缩短Application-Ability初始化阶段耗时" class="headerlink" title="2、缩短Application&amp;Ability初始化阶段耗时"></a>2、缩短Application&amp;Ability初始化阶段耗时</h3><p>该阶段主要是资源加载、虚拟机创建、Application&amp;Ability相关对象的创建与初始化、依赖模块的加载等。</p>
+<h4 id="减少import的模块"><a href="#减少import的模块" class="headerlink" title="减少import的模块"></a>减少import的模块</h4><p>应用代码执行前，应用程序必须找到并加载import的所有模块，应用程序加载的每个额外的第三方框架或者模块都会增加启动时间，耗时长短取决于加载的第三方框架或者模块的数量和大小。推荐开发者尽可能使用系统提供的模块，按需加载，来缩短应用程序的启动耗时。</p>
+<h3 id="3、缩短AbilityStage生命周期阶段耗时"><a href="#3、缩短AbilityStage生命周期阶段耗时" class="headerlink" title="3、缩短AbilityStage生命周期阶段耗时"></a>3、缩短AbilityStage生命周期阶段耗时</h3><p>该阶段主要是AbilityStage的启动生命周期，执行相应的生命周期回调。</p>
+<h4 id="避免在AbilityStage生命周期回调接口进行耗时操作"><a href="#避免在AbilityStage生命周期回调接口进行耗时操作" class="headerlink" title="避免在AbilityStage生命周期回调接口进行耗时操作"></a>避免在AbilityStage生命周期回调接口进行耗时操作</h4><p>在应用启动流程中，系统会执行AbilityStage的生命周期回调函数。因此，不建议在这些回调函数中执行耗时过长的操作，耗时操作建议通过异步任务延迟处理或者放到其他线程执行</p>
+<h3 id="4、缩短Ability生命周期阶段耗时"><a href="#4、缩短Ability生命周期阶段耗时" class="headerlink" title="4、缩短Ability生命周期阶段耗时"></a>4、缩短Ability生命周期阶段耗时</h3><p>该阶段主要是Ability的启动生命周期，执行相应的生命周期回调。</p>
+<h4 id="避免在Ability生命周期回调接口进行耗时操作"><a href="#避免在Ability生命周期回调接口进行耗时操作" class="headerlink" title="避免在Ability生命周期回调接口进行耗时操作"></a>避免在Ability生命周期回调接口进行耗时操作</h4><p>在应用启动流程中，系统会执行Ability的生命周期回调函数。因此，不建议在这些回调函数中执行耗时过长的操作，耗时操作建议通过异步任务延迟处理或者放到其他线程执行。</p>
+<h3 id="5、缩短加载绘制首页阶段耗时"><a href="#5、缩短加载绘制首页阶段耗时" class="headerlink" title="5、缩短加载绘制首页阶段耗时"></a>5、缩短加载绘制首页阶段耗时</h3><p>该阶段主要是加载首页内容、测量布局、刷新组件并绘制。</p>
+<h4 id="自定义组件生命周期回调接口里避免耗时操作"><a href="#自定义组件生命周期回调接口里避免耗时操作" class="headerlink" title="自定义组件生命周期回调接口里避免耗时操作"></a>自定义组件生命周期回调接口里避免耗时操作</h4><p>自定义组件的生命周期变更会调用相应的回调函数。</p>
+<p>aboutToAppear函数会在创建自定义组件实例后，页面绘制之前执行，以下代码在aboutToAppear中对耗时间的计算任务进行了异步处理，避免在该接口执行该耗时操作，不阻塞页面绘制。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/" data-id="clvezpha40009ykqzacry89h9" data-title="提升应用冷启动速度" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/异步并发（Promise和async-awit）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:11:16.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Promise和async&#x2F;await提供异步并发能力，是标准的JS异步语法。异步代码会被挂起并在之后继续执行，同一时间只有一段代码执行，适用于单次I&#x2F;O任务的场景开发，例如一次网络请求、一次文件读写等操作。</p>
+<p>异步语法是一种编程语言的特性，允许程序在执行某些操作时不必等待其完成，而是可以继续执行其他操作。</p>
+<h2 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h2><p>Promise是一种用于处理异步操作的对象，可以将异步操作转换为类似于同步操作的风格，以方便代码编写和维护。Promise提供了一个状态机制来管理异步操作的不同阶段，并提供了一些方法来注册回调函数以处理异步操作的成功或失败的结果。</p>
+<p>Promise有三种状态：pending（进行中）、fulfilled（已完成）和rejected（已拒绝）。Promise对象创建后处于pending状态，并在异步操作完成后转换为fulfilled或rejected状态。</p>
+<p>最基本的用法是通过构造函数实例化一个Promise对象，同时传入一个带有两个参数的函数，通常称为executor函数。executor函数接收两个参数：resolve和reject，分别表示异步操作成功和失败时的回调函数。例如，以下代码创建了一个Promise对象并模拟了一个异步操作：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="attr">promise</span>: <span class="title class_">Promise</span>&lt;<span class="built_in">number</span>&gt; = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span>, reject: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">randomNumber</span>: <span class="built_in">number</span> = <span class="title class_">Math</span>.<span class="title function_">random</span>();</span><br><span class="line">  <span class="keyword">if</span> (randomNumber &gt; <span class="number">0.5</span>) &#123;</span><br><span class="line">    <span class="title function_">resolve</span>(randomNumber);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_">reject</span>(<span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Random number is too small&#x27;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;)</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">const</span> <span class="attr">promise</span>: <span class="title class_">Promise</span>&lt;<span class="built_in">number</span>&gt; = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span>, reject: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">randomNumber</span>: <span class="built_in">number</span> = <span class="title class_">Math</span>.<span class="title function_">random</span>();</span><br><span class="line">  <span class="keyword">if</span> (randomNumber &gt; <span class="number">0.5</span>) &#123;</span><br><span class="line">    <span class="title function_">resolve</span>(randomNumber);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_">reject</span>(<span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Random number is too small&#x27;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中，setTimeout函数模拟了一个异步操作，并在1秒钟后随机生成一个数字。如果随机数大于0.5，则执行resolve回调函数并将随机数作为参数传递；否则执行reject回调函数并传递一个错误对象作为参数。</p>
+<p>Promise对象创建后，可以使用then方法和catch方法指定fulfilled状态和rejected状态的回调函数。then方法可接受两个参数，一个处理fulfilled状态的函数，另一个处理rejected状态的函数。只传一个参数则表示当Promise对象状态变为fulfilled时，then方法会自动调用这个回调函数，并将Promise对象的结果作为参数传递给它。使用catch方法注册一个回调函数，用于处理“失败”的结果，即捕获Promise的状态改变为rejected状态或操作失败抛出的异常。例如：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">BusinessError</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.base&#x27;</span>;</span><br><span class="line"></span><br><span class="line">promise.<span class="title function_">then</span>(<span class="function">(<span class="params">result: <span class="built_in">number</span></span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`Random number is <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">error: BusinessError</span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">error</span>(error.<span class="property">message</span>);</span><br><span class="line">&#125;);</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">BusinessError</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.base&#x27;</span>;</span><br><span class="line"></span><br><span class="line">promise.<span class="title function_">then</span>(<span class="function">(<span class="params">result: <span class="built_in">number</span></span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`Random number is <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">error: BusinessError</span>) =&gt;</span> &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">error</span>(error.<span class="property">message</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中，then方法的回调函数接收Promise对象的成功结果作为参数，并将其输出到控制台上。如果Promise对象进入rejected状态，则catch方法的回调函数接收错误对象作为参数，并将其输出到控制台上。</p>
+<p>async&#x2F;await<br>async&#x2F;await是一种用于处理异步操作的Promise语法糖，使得编写异步代码变得更加简单和易读。通过使用async关键字声明一个函数为异步函数，并使用await关键字等待Promise的解析（完成或拒绝），以同步的方式编写异步操作的代码。</p>
+<p>async函数是一个返回Promise对象的函数，用于表示一个异步操作。在async函数内部，可以使用await关键字等待一个Promise对象的解析，并返回其解析值。如果一个async函数抛出异常，那么该函数返回的Promise对象将被拒绝，并且异常信息会被传递给Promise对象的onRejected()方法。</p>
+<p>下面是一个使用async&#x2F;await的例子，其中模拟了一个异步操作，该操作会在3秒钟后返回一个字符串。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">info</span>(result); <span class="comment">// 输出： Hello, world!</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br><span class="line">ts</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">info</span>(result); <span class="comment">// 输出： Hello, world!</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br></pre></td></tr></table></figure>
+<p>在上述示例代码中，使用了await关键字来等待Promise对象的解析，并将其解析值存储在result变量中。</p>
+<p>需要注意的是，由于要等待异步操作完成，因此需要将整个操作包在async函数中。除了在async函数中使用await外，还可以使用try&#x2F;catch块来捕获异步操作中的异常。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">myAsyncFunction</span>(<span class="params"></span>): <span class="title class_">Promise</span>&lt;<span class="built_in">void</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="attr">result</span>: <span class="built_in">string</span> = <span class="keyword">await</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve: <span class="built_in">Function</span></span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(<span class="string">&#x27;Hello, world!&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">`Get exception: <span class="subst">$&#123;e&#125;</span>`</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">myAsyncFunction</span>();</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/" data-id="clvezpha30007ykqz9nlfedaa" data-title="异步并发（Promise和async/awit）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/并发任务" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T05:05:59.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="并发概述"><a href="#并发概述" class="headerlink" title="并发概述"></a>并发概述</h2><p>并发是指在同一时间段内，能够处理多个任务的能力。为了提升应用的响应速度与帧率，以及防止耗时任务对主线程的干扰，OpenHarmony系统提供了异步并发和多线程并发两种处理策略。</p>
+<ul>
+<li><p>异步并发是指异步代码在执行到一定程度后会被暂停，以便在未来某个时间点继续执行，这种情况下，同一时间只有一段代码在执行。</p>
+</li>
+<li><p>多线程并发允许在同一时间段内同时执行多段代码。在主线程继续响应用户操作和更新UI的同时，后台也能执行耗时操作，从而避免应用出现卡顿。</p>
+</li>
+</ul>
+<p>并发能力在多种场景中都有应用，其中包括单次I&#x2F;O任务、CPU密集型任务、I&#x2F;O密集型任务和同步任务等。开发者可以根据不同的场景，选择相应的并发策略进行优化和开发。</p>
+<p>ArkTS支持异步并发和多线程并发。</p>
+<ul>
+<li><p>Promise和async&#x2F;await提供异步并发能力，适用于单次I&#x2F;O任务的开发场景。详细请参见异步并发概述。</p>
+</li>
+<li><p>TaskPool和Worker提供多线程并发能力，适用于CPU密集型任务、I&#x2F;O密集型任务和同步任务等并发场景。详细请参见多线程并发概述。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/" data-id="clvezpha10004ykqzbs8q3hx1" data-title="并发" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/多线程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T04:32:35.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>应用中的每个进程都会有一个主线程，主线程主要承担执行UI绘制操作、管理ArkTS引擎实例的创建和销毁、分发和处理事件、管理Ability生命周期等职责，具体可参见线程模型概述。因此，开发应用时应当尽量避免将耗时的操作放在主线程中执行。ArkTS提供了Worker和TaskPool两种多线程并发能力。</p>
+<p>鸿蒙系统中Worker和TaskPool都是基于Actor并发模型实现的并发能力。</p>
+<blockquote>
+<p>Actor需要明确指定消息接收方，而CSP中处理单元不用关心这些，只需要把消息发送给Channel，而接收方只需要从Channel读取消息。</p>
+</blockquote>
+<blockquote>
+<p>由于在默认情况下Channel是没有缓存的，因此对Channel的发送（Send）动作是同步阻塞的，直到另外一个持有该Channel引用的执行块取出消息，而Actor模型中信箱本质是队列，因此消息的发送和接收可以是异步的。</p>
+</blockquote>
+<h2 id="Worker"><a href="#Worker" class="headerlink" title="Worker"></a>Worker</h2><p>Worker是一个独立的线程。Worker拥有独立的运行环境，每个Worker线程和主线程一样拥有自己的内存空间、消息队列（MessageQueue）、事件轮询机制（EventLoop）、调用栈（CallStack）等。线程之间通过消息（Massage）进行交互。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ul>
+<li><p>运行时间超过3分钟的任务，需要使用Worker。</p>
+</li>
+<li><p>有关联的一系列同步任务，例如数据库增、删、改、查等，要保证同一个句柄，需要使用Worker。</p>
+</li>
+</ul>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>1、宿主线程创建一个Worker线程。通过new worker.ThreadWorker()创建Worker实例，示例代码如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入worker模块</span></span><br><span class="line"><span class="keyword">import</span> worker, &#123; <span class="title class_">MessageEvents</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.worker&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> common <span class="keyword">from</span> <span class="string">&#x27;@ohos.app.ability.common&#x27;</span>;</span><br><span class="line">        </span><br><span class="line"><span class="keyword">let</span> <span class="attr">workerInstance</span>: worker.<span class="property">ThreadWorker</span> = <span class="keyword">new</span> worker.<span class="title class_">ThreadWorker</span>(<span class="string">&#x27;entry/ets/pages/workers/worker.ts&#x27;</span>, &#123; </span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;FriendsMoments Worker&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>2、宿主线程给Worker线程发送任务消息。宿主线程通过postMessage方法来发送消息给Worker线程，启动下载解压任务，示例代码如下</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请求网络数据</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">context</span>: common.<span class="property">UIAbilityContext</span> = <span class="title function_">getContext</span>(<span class="variable language_">this</span>) <span class="keyword">as</span> common.<span class="property">UIAbilityContext</span>;</span><br><span class="line"><span class="comment">// 参数中mediaData和isImageData是根据开发者自己的业务需求添加的，其中mediaData为数据路径、isImageData为判断图片或视频的标识</span></span><br><span class="line">workerInstance.<span class="title function_">postMessage</span>(&#123; context, <span class="attr">mediaData</span>: <span class="variable language_">this</span>.<span class="property">mediaData</span>, <span class="attr">isImageData</span>: <span class="variable language_">this</span>.<span class="property">isImageData</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>3、Worker线程监听宿主线程发送的消息。Worker线程在onmessage中接收到宿主线程的postMessage请求，执行下载解压任务，示例代码如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入worker模块</span></span><br><span class="line"><span class="keyword">import</span> worker, &#123; <span class="title class_">MessageEvents</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@ohos.worker&#x27;</span>;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">let</span> workerPort = worker.<span class="property">workerPort</span>;</span><br><span class="line"><span class="comment">// 接收宿主线程的postMessage请求</span></span><br><span class="line">workerPort.<span class="property">onmessage</span> = (<span class="attr">e</span>: <span class="title class_">MessageEvents</span>): <span class="function"><span class="params">void</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 下载视频文件</span></span><br><span class="line">  <span class="keyword">let</span> <span class="attr">context</span>: common.<span class="property">UIAbilityContext</span> = e.<span class="property">data</span>.<span class="property">context</span>;</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">filesDir</span>: <span class="built_in">string</span> = context.<span class="property">filesDir</span>;</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">time</span>: <span class="built_in">number</span> = <span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getTime</span>();</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">inFilePath</span>: <span class="built_in">string</span> = <span class="string">`<span class="subst">$&#123;filesDir&#125;</span>/<span class="subst">$&#123;time.toString()&#125;</span>.zip`</span>;</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">mediaDataUrl</span>: <span class="built_in">string</span> = e.<span class="property">data</span>.<span class="property">mediaData</span>;</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">urlPart</span>: <span class="built_in">string</span> = mediaDataUrl.<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>)[<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">length</span>: <span class="built_in">number</span> = urlPart.<span class="title function_">split</span>(<span class="string">&#x27;/&#x27;</span>).<span class="property">length</span>;</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">fileName</span>: <span class="built_in">string</span> = urlPart.<span class="title function_">split</span>(<span class="string">&#x27;/&#x27;</span>)[length-<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">let</span> <span class="attr">options</span>: zlib.<span class="property">Options</span> = &#123;</span><br><span class="line">    <span class="attr">level</span>: zlib.<span class="property">CompressLevel</span>.<span class="property">COMPRESS_LEVEL_DEFAULT_COMPRESSION</span></span><br><span class="line">  &#125;;</span><br><span class="line">  request.<span class="title function_">downloadFile</span>(context, &#123;</span><br><span class="line">    <span class="attr">url</span>: mediaDataUrl,</span><br><span class="line">    <span class="attr">filePath</span>: inFilePath</span><br><span class="line">  &#125;).<span class="title function_">then</span>(<span class="function">(<span class="params">downloadTask</span>) =&gt;</span> &#123;</span><br><span class="line">    downloadTask.<span class="title function_">on</span>(<span class="string">&#x27;progress&#x27;</span>, <span class="function">(<span class="params">receivedSize: <span class="built_in">number</span>, totalSize: <span class="built_in">number</span></span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title class_">Logger</span>.<span class="title function_">info</span>(<span class="string">`receivedSize:<span class="subst">$&#123;receivedSize&#125;</span>,totalSize:<span class="subst">$&#123;totalSize&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    downloadTask.<span class="title function_">on</span>(<span class="string">&#x27;complete&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 下载完成之后执行解压操作</span></span><br><span class="line">      zlib.<span class="title function_">decompressFile</span>(inFilePath, filesDir, options, <span class="function">(<span class="params">errData: BusinessError</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (errData !== <span class="literal">null</span>) &#123;</span><br><span class="line">          ...</span><br><span class="line">          <span class="comment">// 异常处理</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> <span class="attr">videoPath</span>: <span class="built_in">string</span> = <span class="string">`<span class="subst">$&#123;filesDir&#125;</span>/<span class="subst">$&#123;fileName&#125;</span>/<span class="subst">$&#123;fileName&#125;</span>.mp4`</span>;</span><br><span class="line">        workerPort.<span class="title function_">postMessage</span>(&#123; <span class="string">&#x27;isComplete&#x27;</span>: <span class="literal">true</span>, <span class="string">&#x27;filePath&#x27;</span>: videoPath &#125;);</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">    downloadTask.<span class="title function_">on</span>(<span class="string">&#x27;fail&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// 异常处理</span></span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 异常处理</span></span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>4、宿主线程监听Worker线程发送的信息。宿主线程通过onmessage接收到Worker线程发送的消息，并执行下载的结果通知。</p>
+<p>5、释放Worker资源。在业务完成或者页面销毁时，调用workerPort.close()接口主动释放Worker资源，示例代码如下所示：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">workerInstance.<span class="property">onmessage</span> = (<span class="attr">e</span>: <span class="title class_">MessageEvents</span>): <span class="function"><span class="params">void</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (e.<span class="property">data</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">downComplete</span> = e.<span class="property">data</span>[<span class="string">&#x27;isComplete&#x27;</span>];</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">filePath</span> = e.<span class="property">data</span>[<span class="string">&#x27;filePath&#x27;</span>];</span><br><span class="line">    workerInstance.<span class="title function_">terminate</span>();</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">downloadStatus</span> = <span class="literal">false</span>;</span><br><span class="line">    &#125;, <span class="variable constant_">LOADING_DURATION_OPEN</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="TaskPool"><a href="#TaskPool" class="headerlink" title="TaskPool"></a>TaskPool</h3><p>相比使用Worker实现多线程并发，TaskPool更加易于使用，创建开销也少于Worker，并且Worker线程有个数限制，需要开发者自己掌握。TaskPool作用是为应用程序提供一个多线程的运行环境。TaskPool在Worker之上实现了调度器和Worker线程池，TaskPool根据任务的优先级，将其放入不同的优先级队列，调度器会依据自己实现的调度算法（优先级，防饥饿），从优先级队列中取出任务，放入TaskPool中的Worker线程池，执行相关任务。</p>
+<h3 id="TaskPool特点"><a href="#TaskPool特点" class="headerlink" title="TaskPool特点"></a>TaskPool特点</h3><ul>
+<li><p>轻量化的并行机制。</p>
+</li>
+<li><p>降低整体资源的消耗。</p>
+</li>
+<li><p>提高系统的整体性能。</p>
+</li>
+<li><p>无需关心线程实例的生命周期。</p>
+</li>
+<li><p>可以使用TaskPool API创建后台任务（Task），并对所创建的任务进行如任务执行、任务取消的操作。</p>
+</li>
+<li><p>根据任务负载动态调节TaskPool工作线程的数量，以使任务按照预期时间完成任务。</p>
+</li>
+<li><p>可以设置任务的优先级。</p>
+</li>
+<li><p>可以设置任务组（TaskGroup）将任务关联起来。</p>
+</li>
+</ul>
+<h3 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h3><ul>
+<li><p>需要设置优先级的任务。</p>
+</li>
+<li><p>需要频繁取消的任务。</p>
+</li>
+<li><p>大量或者调度点较分散的任务。</p>
+</li>
+</ul>
+<h3 id="使用方法-1"><a href="#使用方法-1" class="headerlink" title="使用方法"></a>使用方法</h3><p>1、首先import引入TaskPool模块。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> taskpool <span class="keyword">from</span> <span class="string">&#x27;@ohos.taskpool&#x27;</span>;</span><br><span class="line">typescript</span><br><span class="line"><span class="keyword">import</span> taskpool <span class="keyword">from</span> <span class="string">&#x27;@ohos.taskpool&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>2、new一个task对象，其中传入被调用的方法和参数。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建task任务项，参数1.任务执行需要传入函数 参数2.任务执行传入函数的参数 （本示例中此参数为被调用的网络地址字符串）</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">task</span>: taskpool.<span class="property">Task</span> = <span class="keyword">new</span> taskpool.<span class="title class_">Task</span>(getWebData, jsonUrl);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取网络数据</span></span><br><span class="line"><span class="meta">@Concurrent</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">getWebData</span>(<span class="params">url: <span class="built_in">string</span></span>): <span class="title class_">Promise</span>&lt;<span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt;&gt; &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="attr">webData</span>: http.<span class="property">HttpResponse</span> = <span class="keyword">await</span> http.<span class="title function_">createHttp</span>().<span class="title function_">request</span>(</span><br><span class="line">      url,</span><br><span class="line">      &#123; <span class="attr">header</span>: &#123;</span><br><span class="line">          <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">        <span class="attr">connectTimeout</span>: <span class="number">60000</span>, <span class="attr">readTimeout</span>: <span class="number">60000</span></span><br><span class="line">      &#125;)</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> (webData.<span class="property">result</span>) === <span class="string">&#x27;string&#x27;</span>) &#123;</span><br><span class="line">      <span class="comment">// 解析json字符串</span></span><br><span class="line">      <span class="keyword">let</span> <span class="attr">jsonObj</span>: <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt; = <span class="keyword">await</span> <span class="title class_">JSON</span>.<span class="title function_">parse</span>(webData.<span class="property">result</span>).<span class="property">FriendMoment</span>;</span><br><span class="line">      <span class="keyword">let</span> <span class="attr">friendMomentBuckets</span>: <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt; = <span class="keyword">new</span> <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt;();</span><br><span class="line">      <span class="comment">// 下方源码省略，主要为数据解析和耗时操作处理</span></span><br><span class="line">      ...</span><br><span class="line">      <span class="keyword">return</span> friendMomentBuckets;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 异常处理</span></span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="comment">// 异常处理</span></span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、之后使用taskpool.execute执行TaskPool任务，将待执行的函数放入TaskPool内部任务队列等待执行。execute需要两个参数：创建的任务对象、等待执行的任务组的优先级，默认值是Priority.MEDIUM。在TaskPool中执行完数据下载、解析和处理后，再返回给主线程中。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">friendMomentArray</span>: <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt; = <span class="keyword">await</span> taskpool.<span class="title function_">execute</span>(task, taskpool.<span class="property">Priority</span>.<span class="property">MEDIUM</span>) <span class="keyword">as</span> <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt;;</span><br><span class="line">typescript</span><br><span class="line"><span class="keyword">let</span> <span class="attr">friendMomentArray</span>: <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt; = <span class="keyword">await</span> taskpool.<span class="title function_">execute</span>(task, taskpool.<span class="property">Priority</span>.<span class="property">MEDIUM</span>) <span class="keyword">as</span> <span class="title class_">Array</span>&lt;<span class="title class_">FriendMoment</span>&gt;;</span><br></pre></td></tr></table></figure>
+<p>4、将新获取的momentData通过AppStorage.setOrCreate传入页面组件中。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取页面组件中的momentData对象，其中是组件所需的username、image、video等数据</span></span><br><span class="line"><span class="keyword">let</span> momentData = <span class="title class_">AppStorage</span>.<span class="property">get</span>&lt;<span class="title class_">FriendMomentsData</span>&gt;(<span class="string">&#x27;momentData&#x27;</span>);</span><br><span class="line"><span class="comment">// 循环遍历对象并依次传入momentData</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; friendMomentArray.<span class="property">length</span>; i++) &#123;</span><br><span class="line">  momentData.<span class="title function_">pushData</span>(friendMomentArray[i]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 将更新的momentData返回给页面组件</span></span><br><span class="line"><span class="title class_">AppStorage</span>.<span class="title function_">setOrCreate</span>(<span class="string">&#x27;momentData&#x27;</span>, momentData);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Worker和TaskPool实现特点对比"><a href="#Worker和TaskPool实现特点对比" class="headerlink" title="Worker和TaskPool实现特点对比"></a>Worker和TaskPool实现特点对比</h2><table>
+<thead>
+<tr>
+<th align="left">实现</th>
+<th>TaskPool</th>
+<th>Worker</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">线程隔离</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td align="left">内存模型</td>
+<td>线程间隔离，内存不共享。</td>
+<td>线程间隔离，内存不共享。</td>
+</tr>
+<tr>
+<td align="left">参数传递机制</td>
+<td>采用标准的结构化克隆算法（Structured Clone）进行序列化、反序列化，完成参数传递。 支持ArrayBuffer转移和SharedArrayBuffer共享。</td>
+<td>采用标准的结构化克隆算法（Structured Clone）进行序列化、反序列化，完成参数传递。 支持ArrayBuffer转移和SharedArrayBuffer共享。</td>
+</tr>
+<tr>
+<td align="left">参数传递</td>
+<td>直接传递，无需封装，默认进行transfer。</td>
+<td>消息对象唯一参数，需要自己封装。</td>
+</tr>
+<tr>
+<td align="left">方法调用</td>
+<td>直接将方法传入调用。</td>
+<td>在Worker线程中进行消息解析并调用对应方法。</td>
+</tr>
+<tr>
+<td align="left">返回值</td>
+<td>异步调用后默认返回。</td>
+<td>主动发送消息，需在onmessage解析赋值。</td>
+</tr>
+<tr>
+<td align="left">生命周期</td>
+<td>TaskPool自行管理生命周期，无需关心任务负载高低。</td>
+<td>开发者自行管理Worker的数量及生命周期。</td>
+</tr>
+<tr>
+<td align="left">任务池个数上限</td>
+<td>自动管理，无需配置。</td>
+<td>同个进程下，最多支持同时开启8个Worker线程。</td>
+</tr>
+<tr>
+<td align="left">任务执行时长上限</td>
+<td>3分钟（不包含Promise和async&#x2F;await异步调用的耗时，例如网络下载、文件读写等I&#x2F;O任务的耗时）。</td>
+<td>无限制。</td>
+</tr>
+<tr>
+<td align="left">设置任务的优先级</td>
+<td>支持配置任务优先级。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">执行任务的取消</td>
+<td>支持取消已经发起的任务。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">线程复用</td>
+<td>支持。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">任务延时执行</td>
+<td>支持。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">设置任务依赖关系</td>
+<td>支持。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">串行队列</td>
+<td>支持。</td>
+<td>不支持。</td>
+</tr>
+<tr>
+<td align="left">任务组</td>
+<td>支持。</td>
+<td>不支持。</td>
+</tr>
+</tbody></table>
+<h2 id="Worker和TaskPool适用场景对比"><a href="#Worker和TaskPool适用场景对比" class="headerlink" title="Worker和TaskPool适用场景对比"></a>Worker和TaskPool适用场景对比</h2><p>TaskPool和Worker均支持多线程并发能力。由于TaskPool的工作线程会绑定系统的调度优先级，并且支持负载均衡（自动扩缩容），而Worker需要开发者自行创建，存在创建耗时以及不支持设置调度优先级，故在性能方面使用TaskPool会优于Worker，因此大多数场景推荐使用TaskPool。</p>
+<p>TaskPool偏向独立任务维度，该任务在线程中执行，无需关注线程的生命周期，超长任务（大于3分钟）会被系统自动回收；而Worker偏向线程的维度，支持长时间占据线程执行，需要主动管理线程生命周期。</p>
+<p>常见的一些开发场景及适用具体说明如下：</p>
+<ul>
+<li><p>运行时间超过3分钟（不包含Promise和async&#x2F;await异步调用的耗时，例如网络下载、文件读写等I&#x2F;O任务的耗时）的任务。例如后台进行1小时的预测算法训练等CPU密集型任务，需要使用Worker。</p>
+</li>
+<li><p>有关联的一系列同步任务。例如在一些需要创建、使用句柄的场景中，句柄创建每次都是不同的，该句柄需永久保存，保证使用该句柄进行操作，需要使用Worker。</p>
+</li>
+<li><p>需要设置优先级的任务。例如图库直方图绘制场景，后台计算的直方图数据会用于前台界面的显示，影响用户体验，需要高优先级处理，需要使用TaskPool。</p>
+</li>
+<li><p>需要频繁取消的任务。例如图库大图浏览场景，为提升体验，会同时缓存当前图片左右侧各2张图片，往一侧滑动跳到下一张图片时，要取消另一侧的一个缓存任务，需要使用TaskPool。</p>
+</li>
+<li><p>大量或者调度点较分散的任务。例如大型应用的多个模块包含多个耗时任务，不方便使用8个Worker去做负载管理，推荐采用TaskPool。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="clvezpha30006ykqzhxcf2uav" data-title="多线程能力" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/服务卡片" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/22/%E9%B8%BF%E8%92%99/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" class="article-date">
+  <time class="dt-published" datetime="2024-04-22T15:20:58.000Z" itemprop="datePublished">2024-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/22/%E9%B8%BF%E8%92%99/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/">服务卡片</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>服务卡片是一种界面展示形式，可以将应用的重要信息或操作前置到卡片，以达到服务直达、减少体验层级的目的。卡片常用于嵌入到其他应用（当前卡片使用方只支持系统应用，如桌面）中作为其界面显示的一部分，并支持拉起页面、发送消息等基础的交互功能。</p>
+<h3 id="卡片的约束"><a href="#卡片的约束" class="headerlink" title="卡片的约束"></a>卡片的约束</h3><p>由于ArkTS卡片显示在使用方应用中，使用方应用一般为桌面应用，为确保桌面的使用体验以及功耗相关考虑，对ArkTS卡片的能力做了以下约束：</p>
+<ul>
+<li>不支持加载so。</li>
+<li>不支持使用native语言开发。</li>
+<li>仅支持声明式范式的部分组件、事件、动效、数据管理、状态管理和API能力。</li>
+<li>卡片的事件处理和使用方的事件处理是独立的，建议在使用方支持左右滑动的场景下卡片内容不要使用左右滑动功能的组件，以防手势冲突影响交互体验。</li>
+</ul>
+<p>除此之外，当前ArkTS卡片还存在如下约束：</p>
+<ul>
+<li>暂不支持导入模块。</li>
+<li>暂不支持极速预览。</li>
+<li>暂不支持断点调试能力。</li>
+<li>暂不支持Hot Reload热重载。</li>
+</ul>
+<h3 id="卡片生命周期管理"><a href="#卡片生命周期管理" class="headerlink" title="卡片生命周期管理"></a>卡片生命周期管理</h3><p>onAddForm(want)<br>卡片提供方接收创建卡片的通知接口。</p>
+<p>onCastToNormalForm(formId)<br>临时卡片转常态卡片的通知接口。</p>
+<p>onUpdateForm(formId)<br>卡片提供方接收更新卡片的通知接口。获取最新数据后调用formProvider的updateForm接口刷新卡片数据。</p>
+<p>onChangeFormVisibility(newStatus)<br>卡片提供方接收修改可见性的通知接口。</p>
+<p>onFormEvent(formId, message)<br>卡片提供方接收处理卡片事件的通知接口。,卡片页面调用message事件会触发该回调</p>
+<p>onRemoveForm(formId)<br>卡片提供方接收销毁卡片的通知接口。</p>
+<p>onConfigurationUpdate(newConfig)<br>当系统配置更新时调用。</p>
+<p>onAcquireFormState(want)<br>卡片提供方接收查询卡片状态通知接口。默认返回卡片初始状态。</p>
+<h3 id="刷新卡片"><a href="#刷新卡片" class="headerlink" title="刷新卡片"></a>刷新卡片</h3><p>ArkTS卡片框架提供了updateForm()接口和requestForm()接口主动触发卡片的页面刷新。</p>
+<blockquote>
+<p>updateForm 由卡片提供方调用，仅允许刷新自己的卡片</p>
+</blockquote>
+<blockquote>
+<p>requestForm 卡片使用方调用，目前卡片使用方仅为系统应用 </p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> <span class="keyword">let</span> formData = &#123;</span><br><span class="line">    <span class="string">&#x27;title&#x27;</span>: <span class="string">&#x27;Title Update Success.&#x27;</span>, <span class="comment">// 和卡片布局中对应</span></span><br><span class="line">    <span class="string">&#x27;detail&#x27;</span>: <span class="string">&#x27;Detail Update Success.&#x27;</span>, <span class="comment">// 和卡片布局中对应</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 卡片页面对应绑定title和detail字段会触发UI刷新</span></span><br><span class="line"><span class="keyword">let</span> formInfo = formBindingData.<span class="title function_">createFormBindingData</span>(formData)</span><br><span class="line">formProvider.<span class="title function_">updateForm</span>(formId, formInfo).<span class="title function_">then</span>(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;FormAbility updateForm success.&#x27;</span> + <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(data));</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;FormAbility updateForm failed: &#x27;</span> + <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(error));</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="卡片使事件能力"><a href="#卡片使事件能力" class="headerlink" title="卡片使事件能力"></a>卡片使事件能力</h3><p>ArkTS卡片中提供了postCardAction(component: Object, action: Object)接口用于卡片内部和提供方应用间的交互，当前支持router、message和call三种类型的事件，仅在卡片中可以调用。</p>
+<blockquote>
+<p>component: 当前自定义组件的实例，通常传入this。<br>action: 事件对象，包含action类型、跳转方信息、参数等字段。</p>
+</blockquote>
+<h4 id="router事件"><a href="#router事件" class="headerlink" title="router事件"></a>router事件</h4><p>跳转到提供方应用的指定UIAbility。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 卡片中调用router事件，拉起对应的UIAbility</span></span><br><span class="line"><span class="title function_">postCardAction</span>(<span class="variable language_">this</span>, &#123;</span><br><span class="line">    <span class="string">&#x27;action&#x27;</span>: <span class="string">&#x27;router&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;bundleName&#x27;</span>: <span class="string">&#x27;com.example.myapplication&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;abilityName&#x27;</span>: <span class="string">&#x27;EntryAbility&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;params&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;detail&#x27;</span>: <span class="string">&#x27;RouterFromCard&#x27;</span> <span class="comment">// 自定义要发送的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对应被拉起的UIAbility中获取卡片传递的数据</span></span><br><span class="line"><span class="comment">// 如果UIAbility已经在后台运行，则会触发onNewWant生命周期回调</span></span><br><span class="line"> <span class="title function_">onCreate</span>(<span class="params">want, launchParam</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (want.<span class="property">parameters</span>[formInfo.<span class="property">FormParam</span>.<span class="property">IDENTITY_KEY</span>] !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> curFormId = want.<span class="property">parameters</span>[formInfo.<span class="property">FormParam</span>.<span class="property">IDENTITY_KEY</span>];</span><br><span class="line">        <span class="keyword">let</span> msg = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(want.<span class="property">parameters</span>.<span class="property">params</span>).<span class="property">detail</span>; <span class="comment">// 对应的自定义数据 &#x27;RouterFromCard&#x27;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 可以进行相应的业务处理或者卡片刷新</span></span><br><span class="line">        <span class="comment">// todo</span></span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="call事件"><a href="#call事件" class="headerlink" title="call事件"></a>call事件</h4><p>后台启动提供方应用。触发后会拉起提供方应用的指定UIAbility（仅支持launchType为singleton的UIAbility，即启动模式为单实例的UIAbility），但不会调度到前台。提供方应用需要具备后台运行权限</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FormAbility.ets</span></span><br><span class="line"><span class="title function_">onAddForm</span>(<span class="params">want</span>) &#123;</span><br><span class="line">   <span class="keyword">let</span> formId = want.<span class="property">parameters</span>[<span class="string">&quot;ohos.extra.param.key.form_identity&quot;</span>];</span><br><span class="line">   <span class="keyword">let</span> formData = formBindingData.<span class="title function_">createFormBindingData</span>(&#123; <span class="string">&quot;formId&quot;</span>: formId &#125;);</span><br><span class="line">   <span class="comment">// 将卡片id绑定到卡片数据中</span></span><br><span class="line">   <span class="keyword">return</span> formData;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// widgetCard.ets</span></span><br><span class="line"><span class="comment">// 获取卡片数据中的卡片id字段</span></span><br><span class="line"><span class="meta">@LocalStorageProp</span>(<span class="string">&#x27;formId&#x27;</span>) <span class="attr">formId</span>: <span class="built_in">string</span> = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 卡片中调用call事件，拉起对应的UIAbility</span></span><br><span class="line"><span class="title function_">postCardAction</span>(<span class="variable language_">this</span>, &#123;</span><br><span class="line">    <span class="string">&#x27;action&#x27;</span>: <span class="string">&#x27;call&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;bundleName&#x27;</span>: <span class="string">&#x27;com.example.myapplication&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;abilityName&#x27;</span>: <span class="string">&#x27;EntryAbility&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;params&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;mehtod&#x27;</span>: <span class="string">&#x27;callFromCard&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;formId&#x27;</span>: <span class="variable language_">this</span>.<span class="property">formId</span>,</span><br><span class="line">        <span class="string">&#x27;detail&#x27;</span>: <span class="string">&#x27;CallFromCard&#x27;</span> <span class="comment">// 自定义要发送的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// UIAbility中获监听call事件，获取卡片传递的数据</span></span><br><span class="line"><span class="title function_">onCreate</span>(<span class="params">want, launchParam</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;Want:&#x27;</span> + <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(want));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 监听call事件所需的方法，对应call事件中的method字段</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">callee</span>.<span class="title function_">on</span>(<span class="string">&#x27;callFromCard&#x27;</span>, callFromCard);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`callFromCard register failed with error <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(error)&#125;</span>`</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">callFromCard</span>(<span class="params">data</span>) &#123;</span><br><span class="line">    <span class="comment">// 获取call事件中传递的所有参数</span></span><br><span class="line">    <span class="keyword">let</span> params = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(data.<span class="title function_">readString</span>())</span><br><span class="line">    <span class="keyword">if</span> (params.<span class="property">formId</span> !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> curFormId = params.<span class="property">formId</span>;</span><br><span class="line">        <span class="keyword">let</span> message = params.<span class="property">detail</span>; <span class="comment">// 对应的自定义数据 &#x27;CallFromCard&#x27;</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`UpdateForm formId: <span class="subst">$&#123;curFormId&#125;</span>, message: <span class="subst">$&#123;message&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 可以进行相应的业务处理或者卡片刷新</span></span><br><span class="line">        <span class="comment">// todo</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="message事件"><a href="#message事件" class="headerlink" title="message事件"></a>message事件</h4><p>在卡片页面中可以通过postCardAction接口触发message事件拉起FormExtensionAbility。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 卡片页面</span></span><br><span class="line"><span class="title function_">postCardAction</span>(<span class="variable language_">this</span>, &#123;</span><br><span class="line">    <span class="string">&#x27;action&#x27;</span>: <span class="string">&#x27;message&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;params&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;detail&#x27;</span>: <span class="string">&#x27;messageEvent&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// FormAbility 中接受message事件，获取传递参数</span></span><br><span class="line"><span class="title function_">onFormEvent</span>(<span class="params">formId, message</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`FormAbility onEvent, formId = <span class="subst">$&#123;formId&#125;</span>, message: <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(message)&#125;</span>`</span>);</span><br><span class="line">    <span class="comment">// 可以进行相应的业务处理或者卡片刷新</span></span><br><span class="line">    <span class="comment">// todo</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/22/%E9%B8%BF%E8%92%99/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" data-id="clvezpha5000bykqz9xlcfipa" data-title="服务卡片" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-其他/hexo写作" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/22/%E5%85%B6%E4%BB%96/hexo%E5%86%99%E4%BD%9C/" class="article-date">
+  <time class="dt-published" datetime="2024-04-22T15:02:11.000Z" itemprop="datePublished">2024-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/22/%E5%85%B6%E4%BB%96/hexo%E5%86%99%E4%BD%9C/">hexo写作</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/22/%E5%85%B6%E4%BB%96/hexo%E5%86%99%E4%BD%9C/" data-id="clvb3rsyu000hmsqz8sds5iil" data-title="hexo写作" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-其他/CMakeList" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/22/%E5%85%B6%E4%BB%96/CMakeList/" class="article-date">
+  <time class="dt-published" datetime="2024-04-22T15:01:22.000Z" itemprop="datePublished">2024-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/22/%E5%85%B6%E4%BB%96/CMakeList/">CMakeList</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>一个跨平台的编译工具,可以用简单的语句来描述所有平台的编译过程。CMake能够输出makefile文件，然后系统会根据这个makefile文件内容编译整个工程。</p>
+<p>Makefile是一个工程文件的编译规则，描述了整个工程的编译和链接规则。</p>
+<h3 id="基本语法格式：指令（参数1-参数2…）"><a href="#基本语法格式：指令（参数1-参数2…）" class="headerlink" title="基本语法格式：指令（参数1 参数2…）"></a>基本语法格式：指令（参数1 参数2…）</h3><p>参数使用括号括起，参数之间使用空格或分号隔开，指令是大小写无关的，参数和变量是大小写相关的</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(HELLO hello.cpp)</span><br><span class="line">add_excutable(hello main.cpp hello.cpp)</span><br><span class="line"><span class="keyword">ADD_EXECUTABLE</span>(hello main.cpp <span class="variable">$&#123;HELLO&#125;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h3><h4 id="1-指定cmake的最小版本"><a href="#1-指定cmake的最小版本" class="headerlink" title="1.指定cmake的最小版本"></a>1.指定cmake的最小版本</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.8</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-设置项目名称"><a href="#2-设置项目名称" class="headerlink" title="2.设置项目名称"></a>2.设置项目名称</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">project</span>(demo)</span><br></pre></td></tr></table></figure>
+
+<p>这个命令不是强制性的，但最好都加上。它会引入两个变量 demoBINARYDIR 和 demoSOURCEDIR，同时，CMake 自动定义了两个等价的变量 PROJECTBINARYDIR 和 PROJECTSOURCEDIR。</p>
+<ul>
+<li><p>PROJECTBINARYDIR - 当前执行cmake路径</p>
+</li>
+<li><p>PROJECTSOURCEDIR - 源码最顶层CMakeLists.txt所在路径</p>
+</li>
+</ul>
+<h4 id="3-设置编译模式"><a href="#3-设置编译模式" class="headerlink" title="3.设置编译模式"></a>3.设置编译模式</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(CMAKE_BUILD_TYPE <span class="string">&quot;Debug&quot;</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_BUILD_TYPE <span class="string">&quot;Release&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-生成可执行文件"><a href="#4-生成可执行文件" class="headerlink" title="4.生成可执行文件"></a>4.生成可执行文件</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add_executable</span>(demo demo.cpp) </span><br></pre></td></tr></table></figure>
+
+<h4 id="5-生成一个静态-动态-模块库"><a href="#5-生成一个静态-动态-模块库" class="headerlink" title="5.生成一个静态&#x2F;动态&#x2F;模块库"></a>5.生成一个静态&#x2F;动态&#x2F;模块库</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add_library</span>(common STATIC util.cpp <span class="keyword">test</span>.cpp) <span class="comment">#生成静态库</span></span><br><span class="line">add_libary(common SHARED util.cpp <span class="keyword">test</span>.cpp) <span class="comment">#生成动态库</span></span><br><span class="line">add_libary(common MODULE util.cpp <span class="keyword">test</span>.cpp) <span class="comment">#生成模块库</span></span><br></pre></td></tr></table></figure>
+<p>add_library默认生成静态库</p>
+<h4 id="6-设置目标库需要链接的依赖库"><a href="#6-设置目标库需要链接的依赖库" class="headerlink" title="6.设置目标库需要链接的依赖库"></a>6.设置目标库需要链接的依赖库</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">target_link_libraries</span>(<span class="keyword">target</span> lib1 lib2)</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-设置的包含目录"><a href="#7-设置的包含目录" class="headerlink" title="7.设置的包含目录"></a>7.设置的包含目录</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include_directories</span>(</span><br><span class="line">    <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span></span><br><span class="line">    <span class="variable">$&#123;CMAKE_CURRENT_BINARY_DIR&#125;</span></span><br><span class="line">    <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="8-设置链接库搜索目录"><a href="#8-设置链接库搜索目录" class="headerlink" title="8.设置链接库搜索目录"></a>8.设置链接库搜索目录</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">link_directories($&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/lib)</span><br></pre></td></tr></table></figure>
+
+<h4 id="9-消息输出"><a href="#9-消息输出" class="headerlink" title="9.消息输出"></a>9.消息输出</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>)</span><br><span class="line"><span class="keyword">message</span>(<span class="string">&quot;build with debug mode&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(WARNING <span class="string">&quot;this is warning message&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(FATAL_ERROR <span class="string">&quot;this buld has man error&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="10-搜索目录下所有的源代码文件，并将列表存储在一个变量中"><a href="#10-搜索目录下所有的源代码文件，并将列表存储在一个变量中" class="headerlink" title="10.搜索目录下所有的源代码文件，并将列表存储在一个变量中"></a>10.搜索目录下所有的源代码文件，并将列表存储在一个变量中</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auxsourcedirectory(dir VAR)</span><br></pre></td></tr></table></figure>
+<p>dir：要搜索文件的目录<br>VAR：存储搜索到的源代码文件列表的变量名</p>
+<h4 id="11-查找指定的库文件"><a href="#11-查找指定的库文件" class="headerlink" title="11.查找指定的库文件"></a>11.查找指定的库文件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find_library(VAR name path)</span><br></pre></td></tr></table></figure>
+<p>查找到指定的预编译库，并将它的路径存储在变量中<br>类似的命令还有 findfile()、findpath()、findprogram()、findpackage()</p>
+<h4 id="12-设置变量"><a href="#12-设置变量" class="headerlink" title="12.设置变量"></a>12.设置变量</h4><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 设置变量</span><br><span class="line"><span class="keyword">set</span>(VAR value)</span><br><span class="line">// 设置<span class="keyword">list</span></span><br><span class="line"><span class="keyword">set</span>(<span class="keyword">LIST</span> &#x27;item1&#x27; &#x27;item2&#x27; &#x27;item3&#x27;)</span><br><span class="line">// 删除变量</span><br><span class="line"><span class="keyword">unset</span>(VAR)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://qcxhc.github.io/2024/04/22/%E5%85%B6%E4%BB%96/CMakeList/" data-id="clvezph9w0001ykqz2vnjbbv4" data-title="CMakeList" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-鸿蒙/Web组件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/13/%E9%B8%BF%E8%92%99/Web%E7%BB%84%E4%BB%B6/" class="article-date">
   <time class="dt-published" datetime="2024-04-13T05:20:44.000Z" itemprop="datePublished">2024-04-13</time>
 </a>
     
@@ -83,7 +717,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
+      <a class="p-name article-title" href="/2024/04/13/%E9%B8%BF%E8%92%99/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
     </h1>
   
 
@@ -91,68 +725,31 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>1、JavaScript注入<br>2、Native调用H5、H5调用Native<br>3、Native和H5的双向通信</p>
-<h2>一、Web相关权限</h2>
+        <h2 id="使用web加载H5页面"><a href="#使用web加载H5页面" class="headerlink" title="使用web加载H5页面"></a>使用web加载H5页面</h2><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">webviewController</span>: web_webview.<span class="property">WebviewController</span> = <span class="keyword">new</span> web_webview.<span class="title class_">WebviewController</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载网络页面</span></span><br><span class="line"><span class="title class_">Web</span>(&#123; <span class="attr">src</span>: <span class="string">&#x27;www.example.com&#x27;</span>, <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">webviewController</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载本地页面</span></span><br><span class="line"><span class="title class_">Web</span>(&#123; <span class="attr">src</span>: $rawfile(<span class="string">&quot;local.html&quot;</span>), <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">webviewController</span> &#125;)</span><br></pre></td></tr></table></figure>
 
-<ol>
-<li>domStorageAccess  设置是否开启文档对象模型存储接口（DOM Storage API）权限，默认未开启。</li>
-<li>fileAccess 设置是否开启应用中文件系统的访问，默认启用。$rawfile(filepath&#x2F;filename)中rawfile路径的文件不受该属性影响而限制访问。</li>
-<li>imageAccess 设置是否允许自动加载图片资源，默认允许。</li>
-<li>javaScriptAccess 设置是否允许执行JavaScript脚本，默认允许执行。</li>
-<li>mixedMode 设置是否允许加载超文本传输协议（HTTP）和超文本传输安全协议（HTTPS）混合内容，默认不允许加载HTTP和HTTPS混合内容。</li>
-<li>onlineImageAccess 设置是否允许从网络加载图片资源（通过HTTP和HTTPS访问的资源），默认允许访问。</li>
-<li>zoomAccess 设置是否支持手势进行缩放，默认允许执行缩放。</li>
-<li>overviewModeAccess 设置是否使用概览模式加载网页，默认使用该方式。当前仅支持移动设备。</li>
-<li>databaseAccess 设置是否开启数据库存储API权限，默认不开启。</li>
-<li>geolocationAccess 设置是否开启获取地理位置权限，默认开启。</li>
-<li>mediaPlayGestureAccess 设置有声视频播放是否需要用户手动点击，静音视频播放不受该接口管控，默认需要。</li>
-<li>multiWindowAccess 设置是否开启多窗口权限，默认不开启。 使能多窗口权限时，需要实现onWindowNew事件。</li>
-<li>horizontalScrollBarAccess 设置是否显示横向滚动条，包括系统默认滚动条和用户自定义滚动条。默认显示。</li>
-<li>verticalScrollBarAccess 设置是否显示纵向滚动条，包括系统默认滚动条和用户自定义滚动条。默认显示。</li>
-<li>allowWindowOpenMethod 设置网页是否可以通过JavaScript自动打开新窗口。默认可以。</li>
-<li>forceDarkAccess 设置网页是否开启强制深色模式。默认关闭。该属性仅在darkMode开启深色模式时生效。</li>
-</ol>
-<h2>二、Web相关事件</h2>
+<h2 id="Web组件上传文件"><a href="#Web组件上传文件" class="headerlink" title="Web组件上传文件"></a>Web组件上传文件</h2><p>Web组件支持前端页面选择文件上传功能，应用开发者可以使用onShowFileSelector()接口来处理前端页面文件上传的请求。当用户在前端页面点击文件上传按钮，应用侧在onShowFileSelector()接口中收到文件上传请求，在此接口中开发者将上传的本地文件路径设置给前端页面。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Web</span>(&#123; <span class="attr">src</span>: $rawfile(<span class="string">&#x27;local.html&#x27;</span>), <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">controller</span> &#125;)</span><br><span class="line">   .<span class="title function_">onShowFileSelector</span>(<span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">           <span class="comment">// 开发者设置要上传的文件路径</span></span><br><span class="line">          <span class="keyword">let</span> <span class="attr">fileList</span>: <span class="title class_">Array</span>&lt;<span class="built_in">string</span>&gt; = [</span><br><span class="line">             <span class="string">&#x27;xxx/test.png&#x27;</span>,</span><br><span class="line">          ]</span><br><span class="line">          <span class="keyword">if</span>(event)&#123;</span><br><span class="line">             event.<span class="property">result</span>.<span class="title function_">handleFileList</span>(fileList)</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">       &#125;)</span><br></pre></td></tr></table></figure>
 
-<p>onShowFileSelector 调用此函数以处理具有“文件”输入类型的HTML表单，以响应用户按下的“选择文件”按钮。</p>
-<ol>
-<li>onPageBegin 网页开始加载时触发该回调，且只在主frame触发，iframe或者frameset的内容加载时不会触发此回调。</li>
-<li>onPageEnd 网页加载完成时触发该回调，且只在主frame触发。<br>onProgressChange 网页加载进度变化时触发该回调。<br>onPageVisible 设置旧页面不再呈现，新页面即将可见时触发的回调函数。</li>
-<li>onAlert 网页触发alert()告警弹窗时触发回调。</li>
-<li>onConfirm 网页调用confirm()告警时触发此回调</li>
-<li>onBeforeUnload 刷新或关闭场景下，在即将离开当前页面时触发此回调。刷新或关闭当前页面应先通过点击等方式获取焦点，才会触发此回调。这里可以提示用户正要离开该页面。当回调返回true时，应用可以调用系统弹窗能力，并且需要根据用户的确认或取消操作调用JsResult通知Web组件最终是否离开当前页面。<br>onInterceptRequest 当Web组件加载url之前触发该回调，用于拦截url并返回响应数据。<br>onLoadIntercept 当Web组件加载url之前触发该回调，用于判断是否阻止此次访问。默认允许加载。</li>
-<li>onConsole 通知宿主应用JavaScript console消息。<br>onRequestSelected 当Web组件获得焦点时触发该回调。<br>onScreenCaptureRequest 通知收到屏幕捕获请求。<br>onControllerAttached 当Controller成功绑定到Web组件时触发该回调，并且该Controller必须为WebviewController，因该回调调用时网页还未加载，无法在回调中使用有关操作网页的接口，例如zoomIn、zoomOut等，可以使用loadUrl、getWebId等操作网页不相关的接口。</li>
-</ol>
-<p>onPermissionRequest 通知收到获取权限请求。<br>onContextMenuShow 长按特定元素（例如图片，链接）或鼠标右键，跳出菜单。<br>onDataResubmitted 设置网页表单可以重新提交时触发的回调函数。<br>onScroll 通知网页滚动条滚动位置。<br>onGeolocationShow 通知用户收到地理位置信息获取请求。<br>onGeolocationHide 通知用户先前被调用onGeolocationShow时收到地理位置信息获取请求已被取消。<br>onAudioStateChanged 设置网页上的音频播放状态发生改变时的回调函数。<br>onFullScreenEnter 通知开发者web组件进入全屏模式。<br>onFullScreenExit 通知开发者web组件退出全屏模式。<br>onWindowNew 使能multiWindowAccess情况下，通知用户新建窗口请求。<br>onWindowExit 通知用户窗口关闭请求。<br>onFirstContentfulPaint 设置网页首次内容绘制回调函数。</p>
-<p>onErrorReceive 网页加载遇到错误时触发该回调。<br>onHttpErrorReceive 网页加载资源遇到的HTTP错误（响应码&gt;&#x3D;400)时触发该回调。<br>onDownloadStart 通知主应用开始下载一个文件。<br>onTitleReceive 网页document标题更改时触发该回调。<br>onRefreshAccessedHistory 加载网页页面完成时触发该回调，用于应用更新其访问的历史链接。<br>onRenderExited 应用渲染进程异常退出时触发该回调。<br>onResourceLoad 通知Web组件所加载的资源文件url信息。<br>onScaleChange 当前页面显示比例的变化时触发该回调。</p>
-<h2>一、WebviewController</h2>
+<h2 id="应用侧调用前端页面函数"><a href="#应用侧调用前端页面函数" class="headerlink" title="应用侧调用前端页面函数"></a>应用侧调用前端页面函数</h2><p>应用侧可以通过runJavaScript()方法调用前端页面的JavaScript相关函数。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Web</span>(&#123; <span class="attr">src</span>: $rawfile(<span class="string">&#x27;index.html&#x27;</span>), <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">webviewController</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="title class_">Button</span>(<span class="string">&#x27;runJavaScript&#x27;</span>)</span><br><span class="line">    .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// runJavaScript调用前端页面方法</span></span><br><span class="line">     <span class="variable language_">this</span>.<span class="property">webviewController</span>.<span class="title function_">runJavaScript</span>(<span class="string">&#x27;htmlTest()&#x27;</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<h2 id="前端页面调用应用侧函数"><a href="#前端页面调用应用侧函数" class="headerlink" title="前端页面调用应用侧函数"></a>前端页面调用应用侧函数</h2><p>开发者使用Web组件将应用侧代码注册到前端页面中，注册完成之后，前端页面中使用注册的对象名称就可以调用应用侧的函数，实现在前端页面中调用应用侧方法。</p>
+<p>注册应用侧代码有两种方式，一种在Web组件初始化使用调用，使用javaScriptProxy()接口。另外一种在Web组件初始化完成后调用，使用registerJavaScriptProxy()接口</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// web组件加载本地index.html页面</span></span><br><span class="line"><span class="title class_">Web</span>(&#123; <span class="attr">src</span>: $rawfile(<span class="string">&#x27;index.html&#x27;</span>), <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">webviewController</span>&#125;)</span><br><span class="line">       <span class="comment">// 将对象注入到web端</span></span><br><span class="line">       .<span class="title function_">javaScriptProxy</span>(&#123;</span><br><span class="line">         <span class="attr">object</span>: <span class="variable language_">this</span>.<span class="property">testObj</span>, <span class="comment">// 注入的对象</span></span><br><span class="line">         <span class="attr">name</span>: <span class="string">&quot;testObjName&quot;</span>, <span class="comment">// 对象名称</span></span><br><span class="line">         <span class="attr">methodList</span>: [<span class="string">&quot;test&quot;</span>], <span class="comment">// 需要注入的方法</span></span><br><span class="line">         <span class="attr">controller</span>: <span class="variable language_">this</span>.<span class="property">webviewController</span></span><br><span class="line">       &#125;)</span><br><span class="line"><span class="title class_">Button</span>(<span class="string">&#x27;Register JavaScript To Window&#x27;</span>)</span><br><span class="line">   .<span class="title function_">onClick</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">       <span class="variable language_">this</span>.<span class="property">webviewController</span>.<span class="title function_">registerJavaScriptProxy</span>(<span class="variable language_">this</span>.<span class="property">testObj</span>, <span class="string">&quot;testObjName&quot;</span>, [<span class="string">&quot;test&quot;</span>, <span class="string">&quot;toString&quot;</span>]);</span><br><span class="line">       <span class="comment">// 使用registerJavaScriptProxy()接口注册方法时，注册后需调用refresh()接口生效。</span></span><br><span class="line">       <span class="variable language_">this</span>.<span class="property">webviewController</span>.<span class="title function_">refresh</span>();</span><br><span class="line">   &#125;)   </span><br><span class="line">       </span><br></pre></td></tr></table></figure>
 
-<h2>二、JavaScript注入</h2>
-1. javaScriptProxy 注入JavaScript对象到window对象中，并在window对象中调用该对象的方法。
+<h2 id="建立应用侧与前端页面数据通道"><a href="#建立应用侧与前端页面数据通道" class="headerlink" title="建立应用侧与前端页面数据通道"></a>建立应用侧与前端页面数据通道</h2><p>前端页面和应用侧之间可以用createWebMessagePorts()接口创建消息端口来实现两端的通信。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 1、创建两个消息端口。</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">ports</span> = <span class="variable language_">this</span>.<span class="property">controller</span>.<span class="title function_">createWebMessagePorts</span>();</span><br><span class="line"> <span class="comment">// 2、在应用侧的消息端口(如端口1)上注册回调事件。</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">ports</span>[<span class="number">1</span>].<span class="title function_">onMessageEvent</span>(<span class="function">(<span class="params">result: web_webview.WebMessage</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> msg = <span class="string">&#x27;Got msg from HTML:&#x27;</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">typeof</span>(result) === <span class="string">&#x27;string&#x27;</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`received string message from html5, string is: <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">    msg = msg + result;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="title function_">typeof</span>(result) === <span class="string">&#x27;object&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (result <span class="keyword">instanceof</span> <span class="title class_">ArrayBuffer</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`received arraybuffer from html5, length is: <span class="subst">$&#123;result.byteLength&#125;</span>`</span>);</span><br><span class="line">        msg = msg + <span class="string">&#x27;lenght is &#x27;</span> + result.<span class="property">byteLength</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;not support&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;not support&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">receivedFromHtml</span> = msg;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 3、将另一个消息端口(如端口0)发送到HTML侧，由HTML侧保存并使用。</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">controller</span>.<span class="title function_">postMessage</span>(<span class="string">&#x27;__init_port__&#x27;</span>, [<span class="variable language_">this</span>.<span class="property">ports</span>[<span class="number">0</span>]], <span class="string">&#x27;*&#x27;</span>);</span><br><span class="line"><span class="comment">// 4、使用应用侧的端口给另一个已经发送到html的端口发送消息。</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">ports</span>[<span class="number">1</span>].<span class="title function_">postMessageEvent</span>(<span class="variable language_">this</span>.<span class="property">sendFromEts</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>参数： object: 需要注入的对象，name: 对象名称，methodList: 需要注入的方法列表，controller: 绑定的controller。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.javaScriptProxy(&#123;</span><br><span class="line">          object: this.testObj,</span><br><span class="line">          name: &quot;objName&quot;,</span><br><span class="line">          methodList: [&quot;test&quot;, &quot;toString&quot;],</span><br><span class="line">          controller: this.controller,</span><br><span class="line">      &#125;)</span><br></pre></td></tr></table></figure>
-
-
-<h2>三、cacheMode</h2>
-
-<ol>
-<li>Default &#x3D; 0	使用未过期的cache加载资源，如果cache中无该资源则从网络中获取。</li>
-<li>None &#x3D;	1	加载资源使用cache，如果cache中无该资源则从网络中获取。</li>
-<li>Online &#x3D; 2	加载资源不使用cache，全部从网络中获取。</li>
-<li>Only &#x3D; 3	只从cache中加载资源。</li>
-</ol>
-<p>darkMode 设置Web深色模式，默认关闭。当深色模式开启时，Web将启用媒体查询prefers-color-scheme中网页所定义的深色样式，若网页未定义深色样式，则保持原状。</p>
-<p>textZoomRatio 设置页面的文本缩放百分比，默认为100%。<br>initialScale 设置整体页面的缩放百分比，默认为100。<br>userAgent 设置用户代理。<br>blockNetwork 设置Web组件是否阻止从网络加载资源。<br>defaultFixedFontSize 设置网页的默认等宽字体大小,默认值13。<br>defaultFontSize 设置网页的默认字体大小,默认值16。<br>minFontSize 设置网页字体大小最小值，默认值8。<br>mediaOptions 设置Web媒体播放的策略，其中包括：Web中的音频在重新获焦后能够自动续播的有效期、应用内多个Web实例的音频是否独占。</p>
-
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> h5Port;</span><br><span class="line"><span class="keyword">var</span> output = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.output&#x27;</span>);</span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;message&#x27;</span>, <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (event.<span class="property">data</span> === <span class="string">&#x27;__init_port__&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (event.<span class="property">ports</span>[<span class="number">0</span>] !== <span class="literal">null</span>) &#123;</span><br><span class="line">             <span class="comment">// 1. 保存从ets侧发送过来的端口</span></span><br><span class="line">            h5Port = event.<span class="property">ports</span>[<span class="number">0</span>];</span><br><span class="line">            h5Port.<span class="property">onmessage</span> = <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">              <span class="comment">// 2. 接收ets侧发送过来的消息.</span></span><br><span class="line">              <span class="keyword">var</span> msg = <span class="string">&#x27;Got message from ets:&#x27;</span>;</span><br><span class="line">              <span class="keyword">var</span> result = event.<span class="property">data</span>;</span><br><span class="line">              <span class="keyword">if</span> (<span class="title function_">typeof</span>(result) === <span class="string">&#x27;string&#x27;</span>) &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`received string message from html5, string is: <span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">                msg = msg + result;</span><br><span class="line">              &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="title function_">typeof</span>(result) === <span class="string">&#x27;object&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (result <span class="keyword">instanceof</span> <span class="title class_">ArrayBuffer</span>) &#123;</span><br><span class="line">                  <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">`received arraybuffer from html5, length is: <span class="subst">$&#123;result.byteLength&#125;</span>`</span>);</span><br><span class="line">                  msg = msg + <span class="string">&#x27;lenght is &#x27;</span> + result.<span class="property">byteLength</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                  <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;not support&#x27;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">info</span>(<span class="string">&#x27;not support&#x27;</span>);</span><br><span class="line">              &#125;</span><br><span class="line">              output.<span class="property">innerHTML</span> = msg;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 3. 使用h5Port往ets侧发送消息.</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">PostMsgToEts</span>(<span class="params">data</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (h5Port) &#123;</span><br><span class="line">      h5Port.<span class="title function_">postMessage</span>(data);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;h5Port is null, Please initialize first&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://qcxhc.github.io/2024/04/13/Web%E7%BB%84%E4%BB%B6/" data-id="cluxnftmd0000mgqz8mmmaija" data-title="Web组件" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://qcxhc.github.io/2024/04/13/%E9%B8%BF%E8%92%99/Web%E7%BB%84%E4%BB%B6/" data-id="clvb3rd6f000gmsqzb1z49t70" data-title="Web组件" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+
     </footer>
   </div>
   
@@ -161,9 +758,9 @@
 
 
   
-    <article id="post-鸿蒙学习入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-其他/TS装饰器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="article-date">
+    <a href="/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/" class="article-date">
   <time class="dt-published" datetime="2024-04-11T12:50:05.000Z" itemprop="datePublished">2024-04-11</time>
 </a>
     
@@ -175,7 +772,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">TS装饰器</a>
+      <a class="p-name article-title" href="/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/">TS装饰器</a>
     </h1>
   
 
@@ -257,61 +854,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://qcxhc.github.io/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" data-id="cluvaef7u0001c8qz2vy55klo" data-title="TS装饰器" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://qcxhc.github.io/2024/04/11/%E5%85%B6%E4%BB%96/TS%E8%A3%85%E9%A5%B0%E5%99%A8/" data-id="clvezph9t0000ykqzequm0kqn" data-title="TS装饰器" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
-    </footer>
-  </div>
-  
-</article>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li></ul>
 
-
-
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/04/10/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2024-04-10T14:52:40.449Z" itemprop="datePublished">2024-04-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/10/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://qcxhc.github.io/2024/04/10/hello-world/" data-id="cluvaef7q0000c8qzb9mr2ivn" data-title="Hello World" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
     </footer>
   </div>
   
@@ -321,6 +869,11 @@
 
   
 
+
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+  </nav>
 
 </section>
         
@@ -330,9 +883,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CMake/" rel="tag">CMake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TypeScript/" rel="tag">TypeScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/napi/" rel="tag">napi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" rel="tag">异步并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" rel="tag">服务卡片</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%84%E4%BB%B6/" rel="tag">组件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91/" rel="tag">编译</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="tag">装饰器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%B8%BF%E8%92%99/" rel="tag">鸿蒙</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CMake/" style="font-size: 10px;">CMake</a> <a href="/tags/TypeScript/" style="font-size: 10px;">TypeScript</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/napi/" style="font-size: 10px;">napi</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 15px;">并发</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">异步并发</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%8D%A1%E7%89%87/" style="font-size: 10px;">服务卡片</a> <a href="/tags/%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">组件</a> <a href="/tags/%E7%BC%96%E8%AF%91/" style="font-size: 10px;">编译</a> <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" style="font-size: 10px;">装饰器</a> <a href="/tags/%E9%B8%BF%E8%92%99/" style="font-size: 20px;">鸿蒙</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -351,15 +918,23 @@
       <ul>
         
           <li>
-            <a href="/2024/04/13/Web%E7%BB%84%E4%BB%B6/">Web组件</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/Node-Api%EF%BC%88NDK%EF%BC%89/">Node-Api（NApi）</a>
           </li>
         
           <li>
-            <a href="/2024/04/11/%E9%B8%BF%E8%92%99%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/">TS装饰器</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E6%8F%90%E5%8D%87%E5%BA%94%E7%94%A8%E5%86%B7%E5%90%AF%E5%8A%A8%E9%80%9F%E5%BA%A6/">提升应用冷启动速度</a>
           </li>
         
           <li>
-            <a href="/2024/04/10/hello-world/">Hello World</a>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%EF%BC%88Promise%E5%92%8Casync-awit%EF%BC%89/">异步并发（Promise和async/awit）</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1/">并发</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/25/%E9%B8%BF%E8%92%99/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程能力</a>
           </li>
         
       </ul>
